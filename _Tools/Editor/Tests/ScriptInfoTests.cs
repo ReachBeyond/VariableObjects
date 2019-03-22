@@ -38,7 +38,7 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 			ReferabilityMode mode = ReferabilityMode.Class;
 
 			// ACT
-			ScriptInfo info = new ScriptInfo(name, type, mode);
+			ScriptSetInfo info = new ScriptSetInfo(new ScriptMetaData(name, type, mode));
 
 			// ASSERT
 			Assert.That(info.Name, Is.EqualTo(name));
@@ -56,7 +56,7 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 			};
 
 			// ACT
-			ScriptInfo info = new ScriptInfo(name, type);
+			ScriptSetInfo info = new ScriptSetInfo(new ScriptMetaData(name, type, ReferabilityMode.Unknown));
 			foreach(string GUID in monsters) {
 				info.AddGUID(GUID);
 			}

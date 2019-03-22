@@ -94,7 +94,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		private void DrawVarObjHierarchy(
 			string masterLabel,
 			string masterFoldoutPref,
-			Dictionary<string, ScriptInfo> fileInfoDictionary,
+			Dictionary<string, ScriptSetInfo> fileInfoDictionary,
 			bool canEdit
 		) {
 			bool isFoldedOut;				// A catch-all variable for storing the foldout bools
@@ -111,7 +111,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				EditorGUI.indentLevel++;
 
 				// Step through all of the types found
-				foreach(ScriptInfo fileInfo in fileInfoDictionary.Values) {
+				foreach(ScriptSetInfo fileInfo in fileInfoDictionary.Values) {
 
 					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
 

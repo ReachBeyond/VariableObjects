@@ -29,27 +29,42 @@ using System.Diagnostics;
 namespace ReachBeyond.VariableObjects.Editor {
 
 	/// <summary>
-	/// This class is used for tracking all files related to the given variable object.
+	/// This class is used for tracking all files related to the given
+	/// variable object type.
 	/// </summary>
-	public struct ScriptInfo {
+	public class ScriptSetInfo {
 
 		#region Properties
 		/// <summary>
 		/// The human readable name that is used to refer to the variable object.
 		/// </summary>
 		public string Name {
-			get; private set;
+			get {
+				return MetaData.name;
+			}
 		}
 
 		/// <summary>
 		/// The type which the variable object supports.
 		/// </summary>
 		public string TypeName {
-			get; private set;
+			get {
+				return MetaData.type;
+			}
 		}
 
 		/// <summary>
-		/// All file guids that go with this type.
+		/// The referability mode of the type this script set deals with.
+		/// </summary>
+		public ReferabilityMode Referability {
+			get {
+				return MetaData.ParsedReferability;
+			}
+		}
+
+		/// <summary>
+		/// All file GUIDs that go with this type. Note that this is a copy
+		/// and cannot be modified directly. Refer to AddGUID for that.
 		/// </summary>
 		public string[] GUIDs {
 			get {
@@ -57,7 +72,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 		}
 
-		public ReferabilityMode Referability {
+		public ScriptMetaData MetaData {
 			get; private set;
 		}
 		#endregion
@@ -66,19 +81,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 		private List<string> _GUIDs;
 		#endregion
 
-		#region Functions
-		public ScriptInfo(
-			string name,
-			string type,
-			ReferabilityMode referability = ReferabilityMode.Unknown
-		) {
-			this.Name = name;
-			this.TypeName = type;
-			this.Referability = referability;
-
+		#region Constructors
+		/// <summary>
+		/// Creates a new script based on the given metadata.
+		/// </summary>
+		/// <param name="metaData">Data of the scripts.</param>
+		public ScriptSetInfo(ScriptMetaData metaData) {
+			MetaData = metaData;
 			_GUIDs = new List<string>();
 		}
+		#endregion
 
+		#region Functions
 		public void AddGUID(string newGUID) {
 			if(!string.IsNullOrEmpty(newGUID) && !_GUIDs.Contains(newGUID)) {
 				_GUIDs.Add(newGUID);

@@ -4,16 +4,18 @@ using UnityEngine;
 namespace ReachBeyond.VariableObjects.Editor {
 
 	/// <summary>
-	/// This is a dummy struct which handles converting data to and from
-	/// JSON format.
+	/// This script contains the meta information on one specific script.
+	/// Note that it does not track the script's location; it only tracks
+	/// info held within a script's JSON metadata.
+	///
+	/// This can be converted to and from JSON freely.
 	/// </summary>
 	[System.Serializable]
-	public struct JsonContainer {
+	public struct ScriptMetaData {
 
 		/// <summary>
 		/// Text string used in scripts to specify that they work with a Class.
 		/// </summary>
-		//public const string ClassIdentifier = "Class";
 		public static string ClassIdentifier {
 			get {
 				return ReferabilityMode.Class.ToString();
@@ -29,12 +31,19 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 		}
 
+
 		// NOTE: Careful with renaming these. This will break
 		//       the parsing process. All the files would need
 		//       to be changed... a simple refactor won't work.
 		public string name;
 		public string type;
 		public string referability;
+
+		public ScriptMetaData(string name, string type, ReferabilityMode referability) {
+			this.name = name;
+			this.type = type;
+			this.referability = referability.ToString();
+		}
 
 		/// <summary>
 		/// Attempts to parse the referabilityName as a ReferabilityMode
@@ -55,13 +64,5 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 		} // End field
 
-		/// <summary>
-		/// Creates a new ScriptInfo object which is pre-populated
-		/// with the values in this instance of VObjData.
-		/// </summary>
-		/// <returns>A new ScriptInfo object.</returns>
-		public ScriptInfo ToScriptInfo() {
-			return new ScriptInfo(name, type, ParsedReferability);
-		}
 	} // End struct
 } // End namespace

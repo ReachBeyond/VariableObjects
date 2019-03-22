@@ -21,8 +21,6 @@
 
 #pragma warning disable CS0649
 
-//#define REACHBEYOND_VARIABLES_DEBUG
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -55,19 +53,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public const string UnityLabel = BaseLabel + ".Unity";
 		/// <summary>Label for project-specific VarObjs.</summary>
 		public const string CustomLabel = BaseLabel + ".Custom";
-
 #endregion
 
 #region Variables
 		/// <summary>
 		/// Variable objects that support types that come packages with C# and Unity.
 		/// </summary>
-		private static Dictionary<string, ScriptInfo> _unityVarFiles;
+		private static Dictionary<string, ScriptSetInfo> _unityVarFiles;
 
 		/// <summary>
 		/// Variable objects that support types that are unique to the project.
 		/// </summary>
-		private static Dictionary<string, ScriptInfo> _customVarFiles;
+		private static Dictionary<string, ScriptSetInfo> _customVarFiles;
 
 		/// <summary>
 		/// If true, then the assembly dictionaries are outdated; we need to refresh them before we use them again.
@@ -81,10 +78,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Variable Object.
 		/// </summary>
 		/// <value>The dictionary of general Unity variable files.</value>
-		public static Dictionary<string, ScriptInfo> UnityVarFiles {
+		public static Dictionary<string, ScriptSetInfo> UnityVarFiles {
 			get {
 				UpdateDictionaries();
-				return new Dictionary<string, ScriptInfo>(_unityVarFiles);
+				return new Dictionary<string, ScriptSetInfo>(_unityVarFiles);
 			}
 		}
 
@@ -93,10 +90,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Variable Object.
 		/// </summary>
 		/// <value>The dictionary of project-sepcific variable files.</value>
-		public static Dictionary<string, ScriptInfo> CustomVarFiles {
+		public static Dictionary<string, ScriptSetInfo> CustomVarFiles {
 			get {
 				UpdateDictionaries();
-				return new Dictionary<string, ScriptInfo>(_customVarFiles);
+				return new Dictionary<string, ScriptSetInfo>(_customVarFiles);
 			}
 		}
 #endregion
@@ -171,17 +168,17 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// type names being the keys.
 		/// </returns>
 		/// <param name="label">Label which to search for.</param>
-		private static Dictionary<string, ScriptInfo> BuildTypeInfo(string label) {
+		private static Dictionary<string, ScriptSetInfo> BuildTypeInfo(string label) {
 
-			Dictionary<string, ScriptInfo> allTypeInfo =
-				new Dictionary<string, ScriptInfo>();
+			Dictionary<string, ScriptSetInfo> allTypeInfo =
+				new Dictionary<string, ScriptSetInfo>();
 
 			string[] allGuids = AssetDatabase.FindAssets("l:" + label);
 
 			foreach(string guid in allGuids) {
 
 				// Used for tracking stuff we read from this specific file.
-				JsonContainer fileData = ExtractDataFromFile(
+				ScriptMetaData fileData = ExtractDataFromFile(
 					AssetDatabase.GUIDToAssetPath(guid)
 				);
 
@@ -189,12 +186,12 @@ namespace ReachBeyond.VariableObjects.Editor {
 				// which uses this name. If not, we'll build a new typeInfo
 				// object. At the end of all of this, we save the GUID of
 				// the file into the typeInfo object.
-				ScriptInfo typeInfo;
+				ScriptSetInfo typeInfo;
 				if(!allTypeInfo.TryGetValue(fileData.name, out typeInfo)) {
 
 					// First file of this typeName, so allTypeInfo doesn't
 					// contain any info on it.
-					typeInfo = fileData.ToScriptInfo();
+					typeInfo = new ScriptSetInfo(fileData);
 					allTypeInfo[typeInfo.Name] = typeInfo;
 
 					if(fileData.ParsedReferability == ReferabilityMode.Unknown) {
@@ -246,12 +243,12 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		/// <returns>The data from the file.</returns>
 		/// <param name="path">Path of file.</param>
-		private static JsonContainer ExtractDataFromFile( string path ) {
+		private static ScriptMetaData ExtractDataFromFile( string path ) {
 
 			const string DATA_HEADER = "START VARIABLE OBJECT INFO";
 			const string DATA_FOOTER = "END VARIABLE OBJECT INFO";
 
-			JsonContainer data = new JsonContainer();
+			ScriptMetaData data = new ScriptMetaData();
 			StreamReader reader;
 
 			string rawJSON = "";
@@ -284,7 +281,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				reader.Close();
 			}
 
-			data = JsonUtility.FromJson<JsonContainer>(rawJSON);
+			data = JsonUtility.FromJson<ScriptMetaData>(rawJSON);
 
 			return data;
 		}
@@ -301,8 +298,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			return Regex.Replace(line, "[*/]", ""); // Drop all comment chars
 		}
 
-		private static void DebugTypeInfoDictionary(Dictionary<string, ScriptInfo> dict) {
-			foreach(KeyValuePair<string, ScriptInfo> pair in dict) {
+		private static void DebugTypeInfoDictionary(Dictionary<string, ScriptSetInfo> dict) {
+			foreach(KeyValuePair<string, ScriptSetInfo> pair in dict) {
 				Debug.Log(pair.Value.ToString());
 			}
 		}

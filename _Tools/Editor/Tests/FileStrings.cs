@@ -45,11 +45,11 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		}
 
 		public void VerifyClassIdentifier() {
-			Assert.That(JsonContainer.ClassIdentifier, Is.EqualTo("Class"));
+			Assert.That(ScriptMetaData.ClassIdentifier, Is.EqualTo("Class"));
 		}
 
 		public void VerifyStructIdentifier() {
-			Assert.That(JsonContainer.StructIdentifier, Is.EqualTo("Struct"));
+			Assert.That(ScriptMetaData.StructIdentifier, Is.EqualTo("Struct"));
 		}
 	}
 }
