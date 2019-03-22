@@ -1,5 +1,5 @@
-Variable and Event Objects
-==========================
+Variable Objects
+================
 
 This is an implementation of couple of [Ryan
 Hipple](https://twitter.com/roboryantron)'s [scriptable
@@ -14,26 +14,26 @@ So I spent a couple months refining the editor tools for this. I think the
 project is at a point where I'm happy to share it with the world. Most of this
 work isn't on the original scriptable objects, but on the Unity Editor tools.
 
-INSTALLATION
+Installation
 ------------
+IMPORTANT: You also need the [EventObjects package] (https://github.com/ReachBeyond/EventObjects)!
+
 Go to *Projects*, and grab the latest unitypackage. Extract this into your
 project, and you're done! Alternatively, you can also clone/submodule this into
 your current project using git. If you do that, I recommend putting it under a
-path such as Imported/ReachBeyond/plugins/EventObjects.
+path such as Imported/ReachBeyond/plugins/VariableObjects.
 
 In the future, I'd like to get this Unity's Asset Store. I'll put a link here
 once that becomes a reality.
 
-USAGE
+Usage
 -----
 I recommend you watch the video linked above. It explains the gist of this
 project.
 
-### Variable Objects
-This is where most of the work has gone in. Variable objects allow you to track
-values outside of specific components. In this sense, they are global. However,
-they give the Unity Editor control over what objects can access these
-components.
+Variable objects allow you to track values outside of specific components. In
+this sense, they are global. However, they give the Unity Editor control over
+what objects can access these components.
 
 I won't describe these in much detail for the time being. I highly recommend
 watching the video linked above for the premise. I'll mostly be going over what
@@ -66,7 +66,7 @@ These editor tools require tags to work correctly. If you need to move files
 around, make sure the tags are preserved!
 
 
-FOR MAINTAINERS
+Developer Notes
 ---------------
 If the define symbol **REACHBEYOND\_VAROBJ\_BUILTIN\_MODE** is used,
 then editor tools will do a couple of things:
@@ -80,7 +80,7 @@ To change the scripting define symbols, refer to this page:
 https://docs.unity3d.com/Manual/class-PlayerSettingsStandalone.html#Configuration
 
 
-OTHER THINGS
+Other Things
 ------------
 More documentation will come eventually.
 
