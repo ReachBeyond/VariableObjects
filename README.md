@@ -16,7 +16,7 @@ work isn't on the original scriptable objects, but on the Unity Editor tools.
 
 Installation
 ------------
-IMPORTANT: You also need the [EventObjects package] (https://github.com/ReachBeyond/EventObjects)!
+IMPORTANT: You also need the [EventObjects package](https://github.com/ReachBeyond/EventObjects)!
 
 Go to *Projects*, and grab the latest unitypackage. Extract this into your
 project, and you're done! Alternatively, you can also clone/submodule this into
