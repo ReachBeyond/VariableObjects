@@ -28,7 +28,20 @@ using System.Collections.Generic;
 
 namespace ReachBeyond.VariableObjects.Editor {
 
+
+	/// <summary>
+	/// This class has the ability to create new variable types based
+	/// on the template files. CreateNewVariableType is probably the only
+	/// function you'll need to look at.
+	/// </summary>
 	public static class VariableTypeBuilder {
+
+		// TODO This should serialize a JSON object and write that out,
+		//      instead of relying on the templates to be correct. This will
+		//      involve pulling ScriptFileManager.VarObjJSONContainer out into
+		//      the open, and then converting that to JSON. Finally, we'll have
+		//      to find a good way to dump the result into a comment-friendly
+		//      format.
 
 		#region Placeholder Strings
 		private const string NamePlaceholder = "@Name@";
@@ -101,13 +114,11 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string targetPath
 		) {
 
-			// We'll use this to track any new files we make at any point,
-			// which makes it easy to clean up after ourselves if things
-			// go awry.
-			List<string> newFilePaths = new List<string>();
-
+			// This is the path of the editor folder we'll use to dump our
+			// editor scripts into.
 			string editorPath = UnityPathUtils.GetEditorFolder(targetPath);
 
+			#region Error checking
 			if(!IsValidName(readableName)) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
@@ -135,6 +146,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 				);
 			}
 			else if(!AssetDatabase.IsValidFolder(targetPath)) {
+				// TODO This seems mildly buggy on Windows. I created a folder
+				//      inside the folder-select prompt and it complained about
+				//      it. Maybe, instead of using AssetDatabase, we should use
+				//      normal C# checks?
 				throw new DirectoryNotFoundException(
 					"targetPath must be pointing to a pre-existing folder. If" +
 					" you want to create a new folder to put the scripts in," +
@@ -155,42 +170,71 @@ namespace ReachBeyond.VariableObjects.Editor {
 					editorPath + " exists as a file, so we cannot make a folder there!"
 				);
 			}
+			#endregion
 
 
-			// It's still possible that the editor folder doesn't exist.
-			// However, we are sure that there isn't a file with that name,
-			// so we can go ahead and create it if necessary.
-			if(!AssetDatabase.IsValidFolder(editorPath)) {
-				editorPath = AssetDatabase.GUIDToAssetPath(
-					AssetDatabase.CreateFolder(targetPath, "Editor")
-				);
 
-				newFilePaths.Add(editorPath);
-			}
+			/*
+			 * At this point, everything is valid. Barring some kind of error
+			 * when writting to the disk, everything should be good to go.
+			 *
+			 * The only thing we are not going to check is if the files already
+			 * exist. We could check this before-hand, but this makes it a bit
+			 * more complex overall. We don't even gain very much in doing this;
+			 * we still need to handle an exception thrown by the file-writing
+			 * code, which may require cleaning up files.
+			 *
+			 * We shall build a list (see newFIlePaths, below) of all of the
+			 * files which we create. That way, we can delete them if something
+			 * goes wrong.
+			 *
+			 *
+			 * Until calling AssetDatabase.Refresh in the finally block,
+			 * we cannot rely on Unity's AssetDatabase class without risking
+			 * the stability of Unity.
+			 *
+			 * If Unity begins a refresh (on its own accord), this process
+			 * occurs asynchroniously. In other words, it may start refreshing
+			 * right in the middle of this function execution.
+			 *
+			 * This is normally okay, but if we catch an exception, we need
+			 * to delete all of the files we created. Deleting files during a
+			 * refresh is risky, and may lead to errors and even lock up
+			 * Unity's reloading mechanisms, halting the Unity Editor.
+			 *
+			 * Fortunately, C# has enough tools to get the job done. Still,
+			 * it's a bit less robust than using the AssetDatabase. Also, we
+			 * cannot set labels until the very end of the process.
+			 *
+			 * (Again, we can't just check ahead of time. There's always risk
+			 * of an exception getting thrown while doing file IO.)
+			 */
 
-			// At this point, everything is valid. Barring some kind of error
-			// when writting to the disk, everything should be good to go.
-			//
-			// The only thing we are not going to check is if the files already
-			// exist. We could check this before-hand, but this makes it a bit
-			// more complex overall. We don't even gain very much in doing this;
-			// we still need to handle an exception thrown by the file-writing
-			// code, which may require cleaning up files.
-			//
-			// We shall build a list of all of the files which we create. That
-			// way, we can delete them if something goes wrong.
-			//
-			//
-			// Until after the AssetDatabase.Refresh in the finally block,
-			// we cannot rely on Unity's AssetDatabase class. This only works
-			// on files which are part of the project. However, if start we
-			// refreshing, it'll refresh asynchroniously. Deleting files
-			// during a refresh is risky, and may lead to errors and even lock
-			// up Unity's reloading mechanisms.
-			//
-			// Fortunately, C# has enough tools to get the job done.
+
+			// Used to track the new files we add so that we can clean them up
+			// if necessary. This is a stack so that the first most recent
+			// things we create get deleted first.
+			Stack<string> newFilePaths = new Stack<string>();
 
 			try {
+
+				// It's still possible that the editor folder doesn't exist.
+				// However, we are sure that there isn't a file with that name,
+				// so we can go ahead and create it if necessary.
+				//
+				// Note that we're doing this BEFORE locking the assemblies so
+				// we can still use the AssetDatabase class.
+				if(!AssetDatabase.IsValidFolder(editorPath)) {
+					editorPath = AssetDatabase.GUIDToAssetPath(
+						AssetDatabase.CreateFolder(targetPath, "Editor")
+					);
+
+					// We've created the folder, so it's one of the things
+					// we'll want to clean up if things go wrong.
+					newFilePaths.Push(editorPath);
+				}
+
+
 				EditorApplication.LockReloadAssemblies();
 
 				foreach(TemplateInfo template in TemplateFileManager.Templates) {
@@ -200,10 +244,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 						template, targetPath, editorPath
 					);
 
-					// Add it to the start so that, when iterating through
-					// later on, the new folder would be at the back.
+					// We do I check for IsNullOrEmpty? That makes no
+					// sense... I'll figure it out later.
 					if(!string.IsNullOrEmpty(newScriptPath)) {
-						newFilePaths.Insert(0, newScriptPath);
+						newFilePaths.Push(newScriptPath);
 					}
 
 				} // End foreach(TemplateInfo template in Files.Templates)
@@ -214,13 +258,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 					if((File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory) {
 						Directory.Delete(path);
+
+						// Possible Unity created a meta file already.
+						if(File.Exists(path + ".meta")) {
+							File.Delete(path + ".meta");
+						}
 					}
 					else {
 						File.Delete(path);
-					}
-
-					if(File.Exists(path + ".meta")) {
-						File.Delete(path + ".meta");
 					}
 				}
 
