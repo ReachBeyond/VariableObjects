@@ -46,50 +46,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// </summary>
 	public static class ScriptFileManager {
 
-#region Custom Types
-
-		/// <summary>
-		/// This is a dummy struct for use with the JSON reader.
-		/// For this reason, all variables should be kept public.
-		/// </summary>
-		[System.Serializable]
-		private struct VarObjJSONContainer {
-			// NOTE: Careful with renaming these. This will break
-			//       the parsing process. All the files would need
-			//       to be changed... a simple refactor won't work.
-			public string name;
-			public string type;
-			public string referability;
-
-			/// <summary>
-			/// Attempts to parse the referabilityName as a ReferabilityMode
-			/// enum. If the parsing fails, ReferabilityMode.Unknown is
-			/// returned.
-			/// </summary>
-			public ReferabilityMode ParsedReferability {
-				get {
-					if(string.Compare(referability, ClassIdentifier, ignoreCase: true) == 0) {
-						return ReferabilityMode.Class;
-					}
-					else if(string.Compare(referability, StructIdentifier, ignoreCase: true) == 0) {
-						return ReferabilityMode.Struct;
-					}
-					else {
-						return ReferabilityMode.Unknown;
-					}
-				}
-			} // End field
-
-			/// <summary>
-			/// Creates a new ScriptInfo object which is pre-populated
-			/// with the values in this instance of VObjData.
-			/// </summary>
-			/// <returns>A new ScriptInfo object.</returns>
-			public ScriptInfo ToScriptInfo() {
-				return new ScriptInfo( name, type, ParsedReferability );
-			}
-		} // End struct
-#endregion
 
 #region Constants
 		/// <summary>Base label used when building the other labels.</summary>
@@ -100,24 +56,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <summary>Label for project-specific VarObjs.</summary>
 		public const string CustomLabel = BaseLabel + ".Custom";
 
-		/// <summary>
-		/// Text string used in scripts to specify that they work with a Class.
-		/// </summary>
-		//public const string ClassIdentifier = "Class";
-		public static string ClassIdentifier {
-			get {
-				return ReferabilityMode.Class.ToString();
-			}
-		}
-
-		/// <summary>
-		/// Text string used in scripts to specify that they work with a Struct.
-		/// </summary>
-		public static string StructIdentifier {
-			get {
-				return ReferabilityMode.Struct.ToString();
-			}
-		}
 #endregion
 
 #region Variables
@@ -243,7 +181,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			foreach(string guid in allGuids) {
 
 				// Used for tracking stuff we read from this specific file.
-				VarObjJSONContainer fileData = ExtractDataFromFile(
+				JsonContainer fileData = ExtractDataFromFile(
 					AssetDatabase.GUIDToAssetPath(guid)
 				);
 
@@ -308,12 +246,12 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		/// <returns>The data from the file.</returns>
 		/// <param name="path">Path of file.</param>
-		private static VarObjJSONContainer ExtractDataFromFile( string path ) {
+		private static JsonContainer ExtractDataFromFile( string path ) {
 
 			const string DATA_HEADER = "START VARIABLE OBJECT INFO";
 			const string DATA_FOOTER = "END VARIABLE OBJECT INFO";
 
-			VarObjJSONContainer data = new VarObjJSONContainer();
+			JsonContainer data = new JsonContainer();
 			StreamReader reader;
 
 			string rawJSON = "";
@@ -346,7 +284,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				reader.Close();
 			}
 
-			data = JsonUtility.FromJson<VarObjJSONContainer>(rawJSON);
+			data = JsonUtility.FromJson<JsonContainer>(rawJSON);
 
 			return data;
 		}
