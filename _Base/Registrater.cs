@@ -19,8 +19,10 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#pragma warning disable CS0649
 
-﻿using UnityEngine;
+
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace ReachBeyond.VariableObjects.Base {
@@ -40,12 +42,12 @@ namespace ReachBeyond.VariableObjects.Base {
 			OnDestroy
 		}
 
-		[SerializeField] VarType variable;
-		[SerializeField] Type targetValue;
+		[SerializeField] private VarType variable;
+		[SerializeField] private Type targetValue;
 
 		[Space(10)]
-		[SerializeField] ConflictSolution uponConflict;
-		[SerializeField] CleanupTrigger cleanupSignal;
+		[SerializeField] private ConflictSolution uponConflict;
+		[SerializeField] private CleanupTrigger cleanupSignal;
 
 		private void Awake() {
 			Assert.IsNotNull(variable);

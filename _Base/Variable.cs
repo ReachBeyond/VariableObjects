@@ -19,7 +19,9 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-﻿using UnityEngine;
+#pragma warning disable CS0649
+
+using UnityEngine;
 using ReachBeyond.EventObjects;
 
 namespace ReachBeyond.VariableObjects.Base {
