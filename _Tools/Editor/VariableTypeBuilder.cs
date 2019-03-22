@@ -18,10 +18,10 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-﻿
+
 // Uncomment this to make it add the Builtin Unity label instead of the custom
 // label.
-//#define BUILTIN_MODE
+//#define REACHBEYOND_VAROBJ_BUILTIN_MODE
 
 using UnityEditor;
 using Microsoft.CSharp;
@@ -54,7 +54,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Creates the new type of the variable based on the given parameters.
 		/// After getting all of the correct templates, they will be copied
 		/// into the folder specified by targetPath.
-		/// 
+		///
 		/// Some templates must be placed in an Editor folder. If one does not
 		/// exist, one might be created. However, this function will avoid
 		/// overwriting files. Once it is done, it will refresh the project.
@@ -62,12 +62,12 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Note that not all of the listen exceptions may get thrown. There
 		/// are others which may get thrown by the file IO methods.
 		/// </summary>
-		/// 
+		///
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// Thrown if any of the arguments are invalid. (See each argument
 		/// for details.)
 		/// </exception>
-		/// 
+		///
 		/// <exception cref="System.IO.DirectoryNotFoundException">
 		/// If the targetPath is invalid.
 		/// </exception>
@@ -76,7 +76,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Thrown if the Editor folder cannot be created. Also thrown if any
 		/// of the files we run into a pre-existing file.
 		/// </exception>
-		/// 
+		///
 		/// <param name="readableName">
 		/// The human readable name. Must be a legal C# name, and must be legal
 		/// when used as a filename. The first character should be uppercase.
@@ -210,7 +210,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 						newFilePaths.Insert(0, newScriptPath);
 					}
 
-				} // End foreach(TemplateInfo template in Files.Templates) 
+				} // End foreach(TemplateInfo template in Files.Templates)
 			} // End try
 			catch(System.Exception e) {
 
@@ -247,7 +247,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		///
 		/// This function does very little checking...it assumes that all names
 		/// are valid C# for identifiers.
-		/// 
+		///
 		/// Be wary that this may throw exceptions. (See StreamReader.ReadToEnd(),
 		/// StreamWriter.Write(), StreamReader's contructor, and StreamWriter's
 		/// constructor.)
@@ -356,7 +356,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					UnityEngine.Object newFileObj =
 						AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
 
-#if BUILTIN_MODE
+#if REACHBEYOND_VAROBJ_BUILTIN_MODE
 					AssetDatabase.SetLabels(
 						newFileObj,
 						new string[] { ScriptFileManager.UnityLabel }
@@ -422,7 +422,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				"bool",  "byte",   "char", "decimal", "double",
 				"float", "int",    "long", "object",  "sbyte",
 				"short", "string", "uint", "ulong",   "ushort"
-			};	
+			};
 
 			return builtinTypeNames.Contains(targetName)
 				   || provider.IsValidIdentifier(targetName);

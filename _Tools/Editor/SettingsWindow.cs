@@ -19,8 +19,12 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// Uncomment this line to enable editting features for all types, including
+// Unity types.
+//#define REACHBEYOND_VAROBJ_BUILTIN_MODE
 
-﻿using UnityEngine;
+
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -69,14 +73,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 				"Unity Variable Types",
 				UnityVarFoldoutPref,
 				ScriptFileManager.UnityVarFiles,
-				hasDeleteButtons: false
+#if REACHBEYOND_VAROBJ_BUILTIN_MODE
+				canEdit: true
+#else
+				canEdit: false
+#endif
 			);
 
 			DrawVarObjHierarchy(
 				"Custom Variable Types",
 				CustomVarFoldoutPref,
 				ScriptFileManager.CustomVarFiles,
-				hasDeleteButtons: true
+				canEdit: true
 			);
 
 			EditorGUILayout.EndScrollView();
@@ -84,15 +92,15 @@ namespace ReachBeyond.VariableObjects.Editor {
 			EditorPrefs.SetFloat(HorizontalScrollPref, scrollPos.x);
 			EditorPrefs.SetFloat(VerticalScrollPref, scrollPos.y);
 		}
-		#endregion
+#endregion
 
 
-		#region GUI Drawing Functions
+#region GUI Drawing Functions
 		private void DrawVarObjHierarchy(
 			string masterLabel,
 			string masterFoldoutPref,
 			Dictionary<string, ScriptInfo> fileInfoDictionary,
-			bool hasDeleteButtons
+			bool canEdit
 		) {
 			bool isFoldedOut;				// A catch-all variable for storing the foldout bools
 			bool markedForDeletion = false;	// For tracking when something's delete button has been pressed
@@ -116,7 +124,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					string foldoutLabel = fileInfo.Name + " (" + fileInfo.Type + ", " + fileInfo.Referability.ToString() + ") ";
 					isFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
 
-					if(hasDeleteButtons && isFoldedOut) {
+					if(canEdit && isFoldedOut) {
 						DrawFoldout(ref isFoldedOut, foldoutLabel, out markedForDeletion);
 					}
 					else {
@@ -134,7 +142,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					}
 
 					// Handle stuff with the delete button
-					if(hasDeleteButtons && markedForDeletion) {
+					if(canEdit && markedForDeletion) {
 
 						//Debug.Log("Delete " + fileInfo.name);
 						//DeleteFilesForType(fileInfo);
@@ -206,7 +214,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			foldout = EditorGUI.Foldout(foldoutRect, foldout, content, toggleOnLabelClick: true);
 			delete = GUI.Button(deleteRect, "Delete");
 		}
-		#endregion
+#endregion
 
 	} // End of class
 
