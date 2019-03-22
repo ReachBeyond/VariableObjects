@@ -248,7 +248,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 			const string DATA_HEADER = "START VARIABLE OBJECT INFO";
 			const string DATA_FOOTER = "END VARIABLE OBJECT INFO";
 
-			ScriptMetaData data = new ScriptMetaData();
 			StreamReader reader;
 
 			string rawJSON = "";
@@ -281,9 +280,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 				reader.Close();
 			}
 
-			data = JsonUtility.FromJson<ScriptMetaData>(rawJSON);
+			//UnityEngine.Debug.Log(ScriptMetaData.FromJson(rawJSON).ToJson());
 
-			return data;
+			return ScriptMetaData.FromJson(rawJSON);
 		}
 
 

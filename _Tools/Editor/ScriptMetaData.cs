@@ -13,6 +13,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	[System.Serializable]
 	public struct ScriptMetaData {
 
+		#region Identifier strings
 		/// <summary>
 		/// Text string used in scripts to specify that they work with a Class.
 		/// </summary>
@@ -30,20 +31,32 @@ namespace ReachBeyond.VariableObjects.Editor {
 				return ReferabilityMode.Struct.ToString();
 			}
 		}
+		#endregion
 
-
+		#region Variables
 		// NOTE: Careful with renaming these. This will break
 		//       the parsing process. All the files would need
 		//       to be changed... a simple refactor won't work.
 		public string name;
 		public string type;
 		public string referability;
+		#endregion
 
+		#region Constructors and and JSON conversions
 		public ScriptMetaData(string name, string type, ReferabilityMode referability) {
 			this.name = name;
 			this.type = type;
 			this.referability = referability.ToString();
 		}
+
+		public static ScriptMetaData FromJson(string rawJson) {
+			return JsonUtility.FromJson<ScriptMetaData>(rawJson);
+		}
+
+		public string ToJson() {
+			return JsonUtility.ToJson(this, prettyPrint: true);
+		}
+		#endregion
 
 		/// <summary>
 		/// Attempts to parse the referabilityName as a ReferabilityMode
