@@ -19,10 +19,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// Uncomment this to make it add the Builtin Unity label instead of the custom
-// label.
-//#define REACHBEYOND_VAROBJ_BUILTIN_MODE
-
 using UnityEditor;
 using Microsoft.CSharp;
 using System.Linq;

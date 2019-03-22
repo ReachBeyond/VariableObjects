@@ -37,7 +37,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// This class provides several tools related to pre-existing files. It
 	/// keeps an organized record of all known variable object files, as well
 	/// as any templates.
-	/// 
+	///
 	/// Results are cached and only updated when necessary, so there is little
 	/// drawback to making repeated calls to these records.
 	///
@@ -46,14 +46,27 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// </summary>
 	public static class ScriptFileManager {
 
-		#region Custom Types
+#region Custom Types
+
+		/// <summary>
+		/// This is a dummy struct for use with the JSON reader.
+		/// For this reason, all variables should be kept public.
+		/// </summary>
 		[System.Serializable]
-		private struct VObjData {
+		private struct VarObjJSONContainer {
+			// NOTE: Careful with renaming these. This will break
+			//       the parsing process. All the files would need
+			//       to be changed... a simple refactor won't work.
 			public string name;
 			public string type;
 			public string referability;
 
-			public ReferabilityMode referabilityMode {
+			/// <summary>
+			/// Attempts to parse the referabilityName as a ReferabilityMode
+			/// enum. If the parsing fails, ReferabilityMode.Unknown is
+			/// returned.
+			/// </summary>
+			public ReferabilityMode ParsedReferability {
 				get {
 					if(string.Compare(referability, ClassIdentifier, ignoreCase: true) == 0) {
 						return ReferabilityMode.Class;
@@ -66,10 +79,19 @@ namespace ReachBeyond.VariableObjects.Editor {
 					}
 				}
 			} // End field
-		} // End struct
-		#endregion
 
-		#region Constants
+			/// <summary>
+			/// Creates a new ScriptInfo object which is pre-populated
+			/// with the values in this instance of VObjData.
+			/// </summary>
+			/// <returns>A new ScriptInfo object.</returns>
+			public ScriptInfo ToScriptInfo() {
+				return new ScriptInfo( name, type, ParsedReferability );
+			}
+		} // End struct
+#endregion
+
+#region Constants
 		/// <summary>Base label used when building the other labels.</summary>
 		public const string BaseLabel = "ReachBeyond.VariableObjects";
 
@@ -219,22 +241,25 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string[] allGuids = AssetDatabase.FindAssets("l:" + label);
 
 			foreach(string guid in allGuids) {
+
+				// Used for tracking stuff we read from this specific file.
+				VarObjJSONContainer fileData = ExtractDataFromFile(
+					AssetDatabase.GUIDToAssetPath(guid)
+				);
+
+				// We need to see if we already know about a variable object
+				// which uses this name. If not, we'll build a new typeInfo
+				// object. At the end of all of this, we save the GUID of
+				// the file into the typeInfo object.
 				ScriptInfo typeInfo;
-
-				/*
-				ExtractNameAndTypeFromFile(
-					AssetDatabase.GUIDToAssetPath(guid),
-					out typeName,
-					out type,
-					out referability
-				);*/
-				VObjData fileData = ExtractDataFromFile(AssetDatabase.GUIDToAssetPath(guid));
-
 				if(!allTypeInfo.TryGetValue(fileData.name, out typeInfo)) {
-					// First file of this typeName; typeInfo will be null
-					typeInfo = new ScriptInfo(fileData.name, fileData.type, fileData.referabilityMode);
 
-					if(fileData.referabilityMode == ReferabilityMode.Unknown) {
+					// First file of this typeName, so allTypeInfo doesn't
+					// contain any info on it.
+					typeInfo = fileData.ToScriptInfo();
+					allTypeInfo[typeInfo.Name] = typeInfo;
+
+					if(fileData.ParsedReferability == ReferabilityMode.Unknown) {
 						Debug.LogWarning(
 							"Unable to identify the referability mode for "
 							+ AssetDatabase.GUIDToAssetPath(guid)
@@ -242,28 +267,31 @@ namespace ReachBeyond.VariableObjects.Editor {
 					}
 				} // End if(!allTypeInfo.TryGetValue(typeName, out typeInfo))
 				else {
-					if(typeInfo.Type != fileData.type) {
+					// Only need to do these checks if there was another
+					// object which claimed this name. So there's a chance
+					// we'll see a mismatch in something.
+					if(typeInfo.TypeName != fileData.type) {
 						Debug.LogWarning(
 							"Type mismatch in "
 							+ AssetDatabase.GUIDToAssetPath(guid) + '\n'
-							+ "Expected '" + typeInfo.Type
+							+ "Expected '" + typeInfo.TypeName
 							+ "' but found '" + fileData.type + "'"
 						);
 					}
 
-					if(typeInfo.Referability != fileData.referabilityMode) {
+					if(typeInfo.Referability != fileData.ParsedReferability) {
 						Debug.LogWarning(
 							"Referability mismatch in "
 							+ AssetDatabase.GUIDToAssetPath(guid) + '\n'
 							+ "Expected '" + typeInfo.Referability.ToString()
-							+ "' but found '" + fileData.referabilityMode.ToString() + "'"
+							+ "' but found '" + fileData.ParsedReferability.ToString() + "'"
 						);
 					}
 				} // End if(!allTypeInfo.TryGetValue(typeName, out typeInfo))
 
-				//typeInfo.GUIDs.Add(guid);
+				// Now we can FINALLY track this file.
 				typeInfo.AddGUID(guid);
-				allTypeInfo[fileData.name] = typeInfo;
+
 			} // End foreach(string guid in allGuids)
 
 			return allTypeInfo;
@@ -275,17 +303,17 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// contains "START VARIABLE OBJECT INFO" and another that contains
 		/// "END VARIABLE OBJECT INFO". Only the first of such blocks is
 		/// heeded, and the rest are ignored.
-		/// 
+		///
 		/// Looks for string fields named "name", "type", and "referability".
 		/// </summary>
 		/// <returns>The data from the file.</returns>
 		/// <param name="path">Path of file.</param>
-		private static VObjData ExtractDataFromFile( string path ) {
+		private static VarObjJSONContainer ExtractDataFromFile( string path ) {
 
 			const string DATA_HEADER = "START VARIABLE OBJECT INFO";
 			const string DATA_FOOTER = "END VARIABLE OBJECT INFO";
 
-			VObjData data = new VObjData();
+			VarObjJSONContainer data = new VarObjJSONContainer();
 			StreamReader reader;
 
 			string rawJSON = "";
@@ -318,7 +346,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				reader.Close();
 			}
 
-			data = JsonUtility.FromJson<VObjData>(rawJSON);
+			data = JsonUtility.FromJson<VarObjJSONContainer>(rawJSON);
 
 			return data;
 		}

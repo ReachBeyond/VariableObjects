@@ -19,11 +19,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// Uncomment this line to enable editting features for all types, including
-// Unity types.
-//#define REACHBEYOND_VAROBJ_BUILTIN_MODE
-
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -121,7 +116,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
 
 					// Draw the foldout (with its delete buttons, if necessary)
-					string foldoutLabel = fileInfo.Name + " (" + fileInfo.Type + ", " + fileInfo.Referability.ToString() + ") ";
+					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
 					isFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
 
 					if(canEdit && isFoldedOut) {

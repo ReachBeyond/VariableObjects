@@ -42,7 +42,7 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 
 			// ASSERT
 			Assert.That(info.Name, Is.EqualTo(name));
-			Assert.That(info.Type, Is.EqualTo(type));
+			Assert.That(info.TypeName, Is.EqualTo(type));
 			Assert.That(info.Referability, Is.EqualTo(mode));
 		}
 

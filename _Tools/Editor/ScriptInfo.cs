@@ -44,7 +44,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <summary>
 		/// The type which the variable object supports.
 		/// </summary>
-		public string Type {
+		public string TypeName {
 			get; private set;
 		}
 
@@ -73,7 +73,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			ReferabilityMode referability = ReferabilityMode.Unknown
 		) {
 			this.Name = name;
-			this.Type = type;
+			this.TypeName = type;
 			this.Referability = referability;
 
 			_GUIDs = new List<string>();
@@ -119,7 +119,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 			return string.Format (
 				"Name: " + Name + '\n' +
-				"Type: " + Type + '\n' +
+				"Type: " + TypeName + '\n' +
 				"Referability: " + Referability.ToString() + '\n' +
 				filePaths );
 		}
