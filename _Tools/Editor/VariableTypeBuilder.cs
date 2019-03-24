@@ -47,6 +47,13 @@ namespace ReachBeyond.VariableObjects.Editor {
 		private const string NamePlaceholder = "@Name@";
 		private const string TypePlaceholder = "@Type@";
 		private const string ReferablePlaceholder = "@Referable@";
+
+		/// <summary>
+		/// This is used because the line endings in the templates need to be
+		/// consistent. Just using \n isn't good enough, and we don't want to
+		/// use Environment.NewLine because this is system-dependant.
+		/// </summary>
+		private const string TemplateNewLine = "\n";
 		#endregion
 
 
@@ -126,7 +133,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					" a C# keyword."
 				);
 			}
-			else if(ScriptFileManager.IsNameTaken(metaData.name)) {
+			else if(ScriptSetManager.IsNameTaken(metaData.name)) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
 					"Is already taken by another VariableObject type."
@@ -361,7 +368,13 @@ namespace ReachBeyond.VariableObjects.Editor {
 					// After changing the conde in this block, revise the
 					// exception documentaion above.
 					scriptWriter = new StreamWriter(newFilePath);
-					scriptWriter.Write(newScriptContents);
+					scriptWriter.Write(newScriptContents + TemplateNewLine);
+
+					// Append the meta data.
+					scriptWriter.Write(ScriptSetManager.DataHeader + TemplateNewLine);
+					scriptWriter.Write(metaData.ToJson()           + TemplateNewLine);
+					scriptWriter.Write(ScriptSetManager.DataFooter + TemplateNewLine);
+
 				}
 				finally {
 					if(scriptWriter != null) {
@@ -398,7 +411,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 #else
 					AssetDatabase.SetLabels(
 						newFileObj,
-						new string[] { ScriptFileManager.CustomLabel }
+						new string[] { ScriptSetManager.CustomLabel }
 					);
 #endif
 

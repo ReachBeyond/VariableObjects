@@ -30,17 +30,17 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 		/// <summary>Label for templates (NOT ACTUAL SCRIPTS).</summary>
 		public const string EngineTemplateLabel =
-			ScriptFileManager.BaseLabel + ".EngineTemplate";
+			ScriptSetManager.BaseLabel + ".EngineTemplate";
 		/// <summary>Label for templates which become editor scripts.</summary>
 		public const string EditorTemplateLabel =
-			ScriptFileManager.BaseLabel + ".EditorTemplate";
+			ScriptSetManager.BaseLabel + ".EditorTemplate";
 
 		/// <summary>Label for scripts that work with a class.</summary>
 		public const string ClassCompatibleTemplateLabel =
-			ScriptFileManager.BaseLabel + ".ClassCompatible";
+			ScriptSetManager.BaseLabel + ".ClassCompatible";
 		/// <summary>Label for scripts that work with a struct.</summary>
 		public const string StructCompatibleTemplateLabel =
-			ScriptFileManager.BaseLabel + ".StructCompatible";
+			ScriptSetManager.BaseLabel + ".StructCompatible";
 
 		/// <summary>
 		/// The list of all of the template files.

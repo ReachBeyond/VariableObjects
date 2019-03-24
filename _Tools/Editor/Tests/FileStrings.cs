@@ -32,9 +32,9 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		/// that should be changing without a very good reasons...if these
 		/// change, then a lot of things are just going to break.
 		/// </summary>
-		[TestCase(ScriptFileManager.BaseLabel, "ReachBeyond.VariableObjects")]
-		[TestCase(ScriptFileManager.UnityLabel, "ReachBeyond.VariableObjects.Unity")]
-		[TestCase(ScriptFileManager.CustomLabel, "ReachBeyond.VariableObjects.Custom")]
+		[TestCase(ScriptSetManager.BaseLabel, "ReachBeyond.VariableObjects")]
+		[TestCase(ScriptSetManager.UnityLabel, "ReachBeyond.VariableObjects.Unity")]
+		[TestCase(ScriptSetManager.CustomLabel, "ReachBeyond.VariableObjects.Custom")]
 
 		[TestCase(TemplateFileManager.EngineTemplateLabel, "ReachBeyond.VariableObjects.EngineTemplate")]
 		[TestCase(TemplateFileManager.EditorTemplateLabel, "ReachBeyond.VariableObjects.EditorTemplate")]

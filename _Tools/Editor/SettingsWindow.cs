@@ -67,7 +67,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			DrawVarObjHierarchy(
 				"Unity Variable Types",
 				UnityVarFoldoutPref,
-				ScriptFileManager.UnityVarFiles,
+				ScriptSetManager.UnityVarFiles,
 #if REACHBEYOND_VAROBJ_BUILTIN_MODE
 				canEdit: true
 #else
@@ -78,7 +78,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			DrawVarObjHierarchy(
 				"Custom Variable Types",
 				CustomVarFoldoutPref,
-				ScriptFileManager.CustomVarFiles,
+				ScriptSetManager.CustomVarFiles,
 				canEdit: true
 			);
 

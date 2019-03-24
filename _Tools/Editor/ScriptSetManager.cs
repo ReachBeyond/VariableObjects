@@ -42,7 +42,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// Note that functions which create files are not included. For that, see
 	/// ReachBeyond.VariableObjects.Editor.VariableTypeBuilder.
 	/// </summary>
-	public static class ScriptFileManager {
+	public static class ScriptSetManager {
 
 
 #region Constants
@@ -53,6 +53,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public const string UnityLabel = BaseLabel + ".Unity";
 		/// <summary>Label for project-specific VarObjs.</summary>
 		public const string CustomLabel = BaseLabel + ".Custom";
+
+		public const string DataHeader = "/* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **";
+		public const string DataFooter = "** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */";
 #endregion
 
 #region Variables
@@ -114,7 +117,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 
 #region Constructor and Events
-		static ScriptFileManager() {
+		static ScriptSetManager() {
 			assemblyDictionariesAreOutdated = true;
 
 			AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
@@ -235,18 +238,12 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <summary>
 		/// Attempts to extract the data from a given file. The data is expected
 		/// to be in a JSON format, and is expected to fall between a line that
-		/// contains "START VARIABLE OBJECT INFO" and another that contains
-		/// "END VARIABLE OBJECT INFO". Only the first of such blocks is
-		/// heeded, and the rest are ignored.
-		///
-		/// Looks for string fields named "name", "type", and "referability".
+		/// contains DataHeader and another that contains DataFooter. Only the
+		/// first of such blocks is heeded, and the rest are ignored.
 		/// </summary>
 		/// <returns>The data from the file.</returns>
 		/// <param name="path">Path of file.</param>
 		private static ScriptMetaData ExtractDataFromFile( string path ) {
-
-			const string DATA_HEADER = "START VARIABLE OBJECT INFO";
-			const string DATA_FOOTER = "END VARIABLE OBJECT INFO";
 
 			StreamReader reader;
 
@@ -261,14 +258,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 				// Read until we find the start of the data
 				while(!foundStart && !reader.EndOfStream) {
 					string line = reader.ReadLine();
-					foundStart = line.Contains(DATA_HEADER);
+					foundStart = line.Contains(DataHeader);
 				}
 
 				// Now read until we find the end of data or end of file
 				while(!foundEnd && !reader.EndOfStream) {
 					string line = reader.ReadLine();
 
-					if(line.Contains(DATA_FOOTER)) {
+					if(line.Contains(DataFooter)) {
 						foundEnd = true;
 					}
 					else {

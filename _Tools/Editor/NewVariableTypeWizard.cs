@@ -166,7 +166,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					"The Human Readable Name is not a valid C# variable" +
 					" name!\n";
 			}
-			else if(ScriptFileManager.IsNameTaken(humanReadableName)) {
+			else if(ScriptSetManager.IsNameTaken(humanReadableName)) {
 				errorMsg +=
 					"The Human Readable Name conflicts with another," +
 					" already existing variable type!\n";
