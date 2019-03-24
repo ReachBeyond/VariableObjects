@@ -48,11 +48,11 @@ namespace ReachBeyond.VariableObjects.Editor {
 #region Constants
 		/// <summary>Base label used when building the other labels.</summary>
 		public const string BaseLabel = "ReachBeyond.VariableObjects";
-
 		/// <summary>Label for Unity-based VarObjs.</summary>
 		public const string UnityLabel = BaseLabel + ".Unity";
 		/// <summary>Label for project-specific VarObjs.</summary>
 		public const string CustomLabel = BaseLabel + ".Custom";
+
 
 		public const string DataHeader = "/* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **";
 		public const string DataFooter = "** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */";
