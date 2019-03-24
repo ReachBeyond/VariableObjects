@@ -43,13 +43,5 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		public void VerifyStrings(string classLabel, string expectedLabel) {
 			Assert.That(classLabel, Is.EqualTo(expectedLabel));
 		}
-
-		public void VerifyClassIdentifier() {
-			Assert.That(ScriptMetaData.ClassIdentifier, Is.EqualTo("Class"));
-		}
-
-		public void VerifyStructIdentifier() {
-			Assert.That(ScriptMetaData.StructIdentifier, Is.EqualTo("Struct"));
-		}
 	}
 }

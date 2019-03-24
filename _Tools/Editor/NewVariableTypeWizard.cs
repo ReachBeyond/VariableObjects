@@ -131,9 +131,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 			try {
 				VariableTypeBuilder.CreateNewVariableType(
-					humanReadableName,
-					dataType,
-					referability,
+					new ScriptMetaData(humanReadableName, dataType, referability),
 					targetFolder.Path
 				);
 
@@ -168,7 +166,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				helpMsg += "Please enter the Human Readable Name.";
 			}
 			else if(!VariableTypeBuilder.IsValidName(humanReadableName)) {
-				errorMsg += 
+				errorMsg +=
 					"The Human Readable Name is not a valid C# variable" +
 					" name!\n";
 			}
@@ -202,7 +200,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				helpMsg += "Please choose a referability mode.";
 			}
 
-				
+
 			// We use Trim here because having extra newlines looks ugly.
 			errorString = errorMsg.Trim();
 			helpString = helpMsg;

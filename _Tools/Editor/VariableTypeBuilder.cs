@@ -86,21 +86,23 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// of the files we run into a pre-existing file.
 		/// </exception>
 		///
-		/// <param name="readableName">
-		/// The human readable name. Must be a legal C# name, and must be legal
+		/// <param name="metaData">
+		/// All of the data to use for the new scripts.
+		///
+		/// metaData.name: Must be a legal C# name, and must be legal
 		/// when used as a filename. The first character should be uppercase.
 		/// If any of the checks fail or if the name is already taken
 		/// by another variable object, then an ArgumentOutOfRangeException is
 		/// thrown.
+		///
+		/// metaData.type: The name of the pre-existing C# type to be represtented. If
+		/// the string fails the checks, then an ArgumentOutOfRangeException is thrown.
+		///
+		/// metaData.ParsedReferability: Whether the C# type refered to by typeName is
+		/// a class or a struct. If ReferabilityMode.Unknown is passed,
+		/// ArgumentOutOfRangeException is thrown.
 		/// </param>
-		/// <param name="typeName">
-		/// The name of the pre-existing C# type to be represtented. If the
-		/// string fails the checks, then an ArgumentOutOfRangeException is thrown.
-		/// </param>
-		/// <param name="referability">
-		/// Whether the C# type refered to by typeName is referable or not.
-		/// If ReferabilityMode.Unknown is passed, ArgumentOutOfRangeException is thrown.
-		/// </param>
+		///
 		/// <param name="targetPath">
 		/// Path used when attempting to create the new files. If this isn't a
 		/// valid path, a DirectoryNotFoundException is thrown. If the
@@ -108,9 +110,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// itself), a ArgumentOutOfRangeException is thrown instead.
 		/// </param>
 		public static void CreateNewVariableType(
-			string readableName,
-			string typeName,
-			ReferabilityMode referability,
+			ScriptMetaData metaData,
 			string targetPath
 		) {
 
@@ -119,27 +119,27 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string editorPath = UnityPathUtils.GetEditorFolder(targetPath);
 
 			#region Error checking
-			if(!IsValidName(readableName)) {
+			if(!IsValidName(metaData.name)) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
 					"Either contains invalid characters or could conflict with" +
 					" a C# keyword."
 				);
 			}
-			else if(ScriptFileManager.IsNameTaken(readableName)) {
+			else if(ScriptFileManager.IsNameTaken(metaData.name)) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
 					"Is already taken by another VariableObject type."
 				);
 			}
-			else if(!IsValidName(typeName)) {
+			else if(!IsValidName(metaData.type)) {
 				throw new System.ArgumentOutOfRangeException(
 					"typeName",
 					"Either contains invalid characters or could conflict with" +
 					" a C# keyword."
 				);
 			}
-			else if(referability == ReferabilityMode.Unknown) {
+			else if(metaData.ParsedReferability == ReferabilityMode.Unknown) {
 				throw new System.ArgumentOutOfRangeException(
 					"referability",
 					"Must be something other than ReferabilityMode.unknown."
@@ -240,12 +240,11 @@ namespace ReachBeyond.VariableObjects.Editor {
 				foreach(TemplateInfo template in TemplateFileManager.Templates) {
 
 					string newScriptPath = CreateScriptFromTemplate(
-						readableName, typeName, referability,
-						template, targetPath, editorPath
+						metaData, template, targetPath, editorPath
 					);
 
-					// We do I check for IsNullOrEmpty? That makes no
-					// sense... I'll figure it out later.
+					// CreateScriptFromTemplate CAN return an empty string if
+					// it chooses not to create a script, so we have to watch for this.
 					if(!string.IsNullOrEmpty(newScriptPath)) {
 						newFilePaths.Push(newScriptPath);
 					}
@@ -301,36 +300,30 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// with the types supported by the template), and empty string is
 		/// returned instead.
 		/// </returns>
-		/// <param name="readableName">Human readable name.</param>
-		/// <param name="typeName">C# name of type to be supported.</param>
-		/// <param name="referability">
-		/// Referability mode associated with the C# type named by typeName.
-		/// </param>
+		/// <param name="metaData">Data used to populate the template.</param>
 		/// <param name="template">Info for the template.</param>
 		/// <param name="normalPath">Path for non-editor scripts.</param>
 		/// <param name="editorPath">Path for editor scripts.</param>
 		private static string CreateScriptFromTemplate(
-			string readableName,
-			string typeName,
-			ReferabilityMode referability,
+			ScriptMetaData metaData,
 			TemplateInfo template,
 			string normalPath,
 			string editorPath
 		) {
 
-			string templatePath = "";   // Path of the template file
-			string newFileName = "";    // Name of the new file
+			//string templatePath = "";   // Path of the template file
+			//string newFileName = "";    // Name of the new file
 			string newFilePath = "";    // Full path of new file (including name)
 
 			// Before attempting to copy the template, we'll check if it
 			// even matches what we need.
-			if(template.IsCompatibleWith(referability)) {
+			if(template.IsCompatibleWith(metaData.ParsedReferability)) {
 
-				templatePath = template.path;
+				string templatePath = template.path;    // Path of the template file
 
-				newFileName = ReplaceTemplatePlaceholders(
+				string newFileName = ReplaceTemplatePlaceholders(
 					Path.GetFileNameWithoutExtension(templatePath),
-					readableName, typeName, referability.ToString()
+					metaData
 				) + ".cs";
 
 				newFilePath = UnityPathUtils.Combine(
@@ -359,7 +352,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 				string newScriptContents = ReplaceTemplatePlaceholders(
 					templateContents,
-					readableName, typeName, referability.ToString()
+					metaData
 				);
 
 
@@ -421,25 +414,21 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		/// <returns>The built template.</returns>
 		/// <param name="templateText">Template text.</param>
-		/// <param name="name">Human readable name.</param>
-		/// <param name="type">C# type name.</param>
-		/// <param name="referability">Referability.</param>
+		/// <param name="metaData">Metadata used for replacing stuff.</param>
 		private static string ReplaceTemplatePlaceholders(
 			string templateText,
-			string name,
-			string type,
-			string referability
+			ScriptMetaData metaData
 		) {
 			templateText = Regex.Replace(
-				templateText, NamePlaceholder, name
+				templateText, NamePlaceholder, metaData.name
 			);
 
 			templateText = Regex.Replace(
-				templateText, TypePlaceholder, type
+				templateText, TypePlaceholder, metaData.type
 			);
 
 			templateText = Regex.Replace(
-				templateText, ReferablePlaceholder, referability
+				templateText, ReferablePlaceholder, metaData.ParsedReferability.ToString()
 			);
 
 			return templateText;

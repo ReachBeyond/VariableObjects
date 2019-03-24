@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
+
 namespace ReachBeyond.VariableObjects.Editor {
 
 	/// <summary>
@@ -8,30 +8,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// Note that it does not track the script's location; it only tracks
 	/// info held within a script's JSON metadata.
 	///
-	/// This can be converted to and from JSON freely.
+	/// This can be converted to and from JSON easily.
 	/// </summary>
 	[System.Serializable]
 	public struct ScriptMetaData {
-
-		#region Identifier strings
-		/// <summary>
-		/// Text string used in scripts to specify that they work with a Class.
-		/// </summary>
-		public static string ClassIdentifier {
-			get {
-				return ReferabilityMode.Class.ToString();
-			}
-		}
-
-		/// <summary>
-		/// Text string used in scripts to specify that they work with a Struct.
-		/// </summary>
-		public static string StructIdentifier {
-			get {
-				return ReferabilityMode.Struct.ToString();
-			}
-		}
-		#endregion
 
 		#region Variables
 		// NOTE: Careful with renaming these. This will break
@@ -42,13 +22,15 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public string referability;
 		#endregion
 
-		#region Constructors and and JSON conversions
+		#region Constructors
 		public ScriptMetaData(string name, string type, ReferabilityMode referability) {
 			this.name = name;
 			this.type = type;
 			this.referability = referability.ToString();
 		}
+		#endregion
 
+		#region JSON conversions
 		public static ScriptMetaData FromJson(string rawJson) {
 			return JsonUtility.FromJson<ScriptMetaData>(rawJson);
 		}
@@ -65,15 +47,13 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		public ReferabilityMode ParsedReferability {
 			get {
-				if(string.Compare(referability, ClassIdentifier, ignoreCase: true) == 0) {
-					return ReferabilityMode.Class;
+				ReferabilityMode result;
+
+				if(!System.Enum.TryParse(referability, true, out result)) {
+					result = ReferabilityMode.Unknown;
 				}
-				else if(string.Compare(referability, StructIdentifier, ignoreCase: true) == 0) {
-					return ReferabilityMode.Struct;
-				}
-				else {
-					return ReferabilityMode.Unknown;
-				}
+
+				return result;
 			}
 		} // End field
 
