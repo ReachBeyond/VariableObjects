@@ -1,5 +1,5 @@
 //
-//  ScriptInfo.cs
+//  ScriptSetInfo.cs
 //
 //  Author:
 //       Autofire <http://www.reach-beyond.pro/>
