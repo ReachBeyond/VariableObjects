@@ -1,5 +1,5 @@
 //
-//  ScriptFileManager.cs
+//  ScriptSetManager.cs
 //
 //  Author:
 //       Autofire <http://www.reach-beyond.pro/>

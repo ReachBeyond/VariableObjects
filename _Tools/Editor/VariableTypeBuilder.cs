@@ -36,13 +36,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// </summary>
 	public static class VariableTypeBuilder {
 
-		// TODO This should serialize a JSON object and write that out,
-		//      instead of relying on the templates to be correct. This will
-		//      involve pulling ScriptFileManager.VarObjJSONContainer out into
-		//      the open, and then converting that to JSON. Finally, we'll have
-		//      to find a good way to dump the result into a comment-friendly
-		//      format.
-
 		#region Placeholder Strings
 		private const string NamePlaceholder = "@Name@";
 		private const string TypePlaceholder = "@Type@";
