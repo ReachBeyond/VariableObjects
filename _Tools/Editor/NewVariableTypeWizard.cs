@@ -34,10 +34,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 		#region Constants
 		private const string EditorPrefPrefix = "ReachBeyond.VariableObjects.";
 		private const string PathPref = EditorPrefPrefix + "WizardPath";
-
-		private const string NamePlaceholder	= "_Name_";
-		private const string TypePlaceholder	= "_Type_";
-		private const string RefModePlaceholder	= "_Referable_";
 		#endregion
 
 		#region Editor fields
