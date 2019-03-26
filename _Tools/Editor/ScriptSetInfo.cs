@@ -75,6 +75,39 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public ScriptMetaData MetaData {
 			get; private set;
 		}
+
+		/// <summary>
+		/// Our best guess as to the path of the scripts. Since there are
+		/// usually more than one script and they can't all be in the
+		/// same place, it's possible that this might return something
+		/// weird.
+		///
+		/// Never will yield an editor path, however.
+		/// </summary>
+		public string DominantPath {
+			get {
+				string resultPath = "";
+				int index = 0;
+				string[] GUIDs = this.GUIDs;	// Grab this and just cache to be efficient.
+				while(resultPath == "" && index < GUIDs.Length) {
+					string path = AssetDatabase.GUIDToAssetPath(GUIDs[index]);
+
+					// We want something which ISN'T in the editor assembly because
+					// that's easier to work with. Of course, this assumes that at
+					// least ONE script isn't in the editor assembly. Things might
+					// go south if that's not the case.
+					if(!UnityPathUtils.IsInEditorAssembly(path)) {
+						resultPath = new FileInfo(path).Directory.FullName;
+					}
+					else {
+						index++;
+					}
+
+				}
+
+				return resultPath;
+			}
+		}
 		#endregion
 
 		#region Variables
@@ -98,6 +131,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				_GUIDs.Add(newGUID);
 			}
 		}
+
 
 		public void DeleteFiles() {
 

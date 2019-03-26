@@ -30,7 +30,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	{
 		// TODO Make the little instruction booklet icon open something relevant
 
-		#region Constants
+#region Constants
 		private const string EditorPrefPrefix = "ReachBeyond.VariableObjects.";
 
 		private const string UnityVarFoldoutPref  = EditorPrefPrefix + "unityVarFoldout";
@@ -38,19 +38,19 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 		private const string HorizontalScrollPref = EditorPrefPrefix + "scrollX";
 		private const string VerticalScrollPref   = EditorPrefPrefix + "scrollY";
-		#endregion
+#endregion
 
 
-		#region Initialization
+#region Initialization
 		[MenuItem("Window/Variable Objects")]
 		public static void Init() {
 			// Get existing open window or if none, make a new one:
 			SettingsWindow window = (SettingsWindow)EditorWindow.GetWindow(typeof(SettingsWindow));
 			window.Show();
 		}
-		#endregion
+#endregion
 
-		#region Events
+#region Events
 		private void OnEnable() {
 			titleContent.text = "VarObj Settings";
 		}
@@ -116,7 +116,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
 
 					// Draw the foldout (with its delete buttons, if necessary)
-					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
+					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") " /*+ fileInfo.DominantPath*/;
 					isFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
 
 					if(canEdit && isFoldedOut) {
@@ -145,7 +145,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 						bool deletionConfirmed = EditorUtility.DisplayDialog(
 							"Delete variable object scripts named '" + fileInfo.Name + "'?",
 							"This action cannot be undone!\n(Check VarObj Settings for listing.)",
-							"Delete them", "Keep them"
+							"Delete them", "Spare them"
 						);
 
 						if(deletionConfirmed) {
