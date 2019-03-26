@@ -116,7 +116,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
 
 					// Draw the foldout (with its delete buttons, if necessary)
-					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") " /*+ fileInfo.DominantPath*/;
+					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
 					isFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
 
 					if(canEdit && isFoldedOut) {
