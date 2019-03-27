@@ -133,6 +133,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 		}
 
 
+		/// <summary>
+		/// Deletes each file associated with this set of scripts. This has
+		/// no prompting and uses AssetDatabase to delete the files.
+		///
+		/// It will also clean up empty editor folders. This could result in
+		/// weird side effects if the user has many editor folder strewn
+		/// about.
+		/// </summary>
 		public void DeleteFiles() {
 
 			if(_GUIDs.Count > 0) {
@@ -157,6 +165,16 @@ namespace ReachBeyond.VariableObjects.Editor {
 				}
 			} // End if
 		} // End DeleteFiles
+
+		public void RebuildFiles() {
+			// We need to save this because DominantPath doesn't work if there
+			// are no files to look at!
+			string path = DominantPath;
+
+			DeleteFiles();
+
+			VariableTypeBuilder.CreateNewVariableType(MetaData, DominantPath);
+		}
 
 		public override string ToString () {
 			string filePaths = "";
