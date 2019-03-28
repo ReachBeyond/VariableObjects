@@ -119,7 +119,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string targetPath,
 			bool overrideExisting = false
 		) {
-
 			// This is the path of the editor folder we'll use to dump our
 			// editor scripts into.
 			string editorPath = UnityPathUtils.GetEditorFolder(targetPath);
@@ -151,7 +150,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					"Must be something other than ReferabilityMode.unknown."
 				);
 			}
-			else if(!AssetDatabase.IsValidFolder(targetPath)) {
+			else if(!AssetDatabase.IsValidFolder(targetPath) && !Directory.Exists(targetPath)) {
 				// TODO This seems mildly buggy on Windows. I created a folder
 				//      inside the folder-select prompt and it complained about
 				//      it. Maybe, instead of using AssetDatabase, we should use

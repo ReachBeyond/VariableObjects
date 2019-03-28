@@ -39,6 +39,22 @@ namespace ReachBeyond.VariableObjects.Editor {
 	public static class UnityPathUtils {
 
 		/// <summary>
+		/// Gets the absolute path to the project's assets folder.
+		/// This will use the current system directory separator.
+		/// </summary>
+		/// <returns>Absolute path to the project's assets folder.</returns>
+		public static string ProjectPath {
+			get {
+				// Application.dataPath is INCONSISTENT!
+				// We need to make sure that the directory separators
+				// match the system default. Otherwise, it will use
+				// the Unix scheme ('/') instead of the Windows scheme
+				// ('\') on any system. THIS IS BAD!!!
+				return Regex.Replace(Application.dataPath, "[/\\\\]", "" + Path.DirectorySeparatorChar);
+			}
+		}
+
+		/// <summary>
 		/// Checks if the given path is a relative path. (Relative to the
 		/// project's root folder.)
 		/// </summary>
@@ -60,7 +76,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public static bool IsAbsoluteProjectPath(string path) {
 
 			return path.StartsWith(
-				Application.dataPath,
+				ProjectPath,
 				System.StringComparison.CurrentCulture
 			);
 		}
@@ -77,7 +93,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string relPath;
 
 			if(IsAbsoluteProjectPath(absPath)) {
-				relPath = absPath.Remove(0, Application.dataPath.Length);
+				relPath = absPath.Remove(0, ProjectPath.Length);
 				relPath = relPath.TrimStart(new char[] { '/', '\\' });
 				relPath = UnityPathUtils.Combine("Assets", relPath);
 			}
@@ -102,7 +118,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			if(IsRelativePath(relPath)) {
 				absPath = relPath.Remove(0, "Assets".Length + 1);
 				absPath = absPath.TrimStart(new char[] { '/', '\\' });
-				absPath = UnityPathUtils.Combine(Application.dataPath, absPath);
+				absPath = UnityPathUtils.Combine(ProjectPath, absPath);
 			}
 			else {
 				absPath = relPath;
@@ -150,8 +166,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// path2 is returned. (It's assumed that they cannot be combined in
 		/// this case.)
 		///
-		/// Otherwise, path2 is appended to path1. A '/' is used as the
-		/// delimiter, as Unity uses this one primarily.
+		/// Otherwise, path2 is appended to path1. The system folder
+		/// delimiter is used to join these.
 		/// </summary>
 		/// <returns>
 		/// The combined result, i.e. path1 + path2, or path2.
@@ -165,9 +181,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 				return path2;
 			}
 			else {
-				path1 = path1.TrimEnd('/');
+				path1 = path1.TrimEnd(Path.DirectorySeparatorChar);
 
-				return path1 + '/' + path2;
+				return path1 + Path.DirectorySeparatorChar + path2;
 			}
 		}
 

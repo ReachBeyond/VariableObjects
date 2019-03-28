@@ -165,6 +165,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 						}
 					}
 					else if(foldoutInfo.selectedRemake) {
+
 						bool remakeConfirmed = EditorUtility.DisplayDialog(
 							"Remake variable object scripts named '" + fileInfo.Name + "'?",
 							"They will be placed inside " + fileInfo.DominantPath +"\n"
