@@ -169,11 +169,24 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public void RebuildFiles() {
 			// We need to save this because DominantPath doesn't work if there
 			// are no files to look at!
-			string path = DominantPath;
+			//string path = DominantPath;
 
-			DeleteFiles();
+			//DeleteFiles();
 
-			VariableTypeBuilder.CreateNewVariableType(MetaData, DominantPath);
+			//yield return new WaitWhile(() => ScriptSetManager.IsNameTaken(Name));
+
+			//while(ScriptSetManager.IsNameTaken(Name)) {
+
+			//}
+
+			VariableTypeBuilder.CreateNewVariableType(
+				MetaData,
+				UnityPathUtils.AbsoluteToRelative(DominantPath),
+				overrideExisting: true
+			);
+
+			//AssemblyReloadEvents.afterAssemblyReload +=
+
 		}
 
 		public override string ToString () {

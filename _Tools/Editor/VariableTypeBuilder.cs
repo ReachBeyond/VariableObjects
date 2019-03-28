@@ -109,9 +109,15 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// target folder is nested in an Editor folder (or is an Editor folder
 		/// itself), a ArgumentOutOfRangeException is thrown instead.
 		/// </param>
+		///
+		/// <param name="overrideExisting">
+		/// If true, this will NOT check for scripts which already exist, and will
+		/// happilly override whatever it finds. This will NOT change GUIDs.
+		/// </param>
 		public static void CreateNewVariableType(
 			ScriptMetaData metaData,
-			string targetPath
+			string targetPath,
+			bool overrideExisting = false
 		) {
 
 			// This is the path of the editor folder we'll use to dump our
@@ -126,7 +132,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					" a C# keyword."
 				);
 			}
-			else if(ScriptSetManager.IsNameTaken(metaData.name)) {
+			else if(ScriptSetManager.IsNameTaken(metaData.name) && !overrideExisting) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
 					"Is already taken by another VariableObject type."
@@ -153,7 +159,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 				throw new DirectoryNotFoundException(
 					"targetPath must be pointing to a pre-existing folder. If" +
 					" you want to create a new folder to put the scripts in," +
-					" you must do it before calling CreateNewVariableType."
+					" you must do it before calling CreateNewVariableType." +
+					"(Trying to use: " + targetPath + ")"
 				);
 			}
 			else if(UnityPathUtils.IsInEditorAssembly(targetPath)) {
@@ -240,7 +247,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				foreach(TemplateInfo template in TemplateFileManager.Templates) {
 
 					string newScriptPath = CreateScriptFromTemplate(
-						metaData, template, targetPath, editorPath
+						metaData, template, targetPath, editorPath, overrideExisting
 					);
 
 					// CreateScriptFromTemplate CAN return an empty string if
@@ -308,7 +315,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			ScriptMetaData metaData,
 			TemplateInfo template,
 			string normalPath,
-			string editorPath
+			string editorPath,
+			bool overrideExisting = false
 		) {
 
 			//string templatePath = "";   // Path of the template file
@@ -331,7 +339,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					newFileName
 				);
 
-				if(File.Exists(newFilePath)) {
+				if(File.Exists(newFilePath) && !overrideExisting) {
 					throw new IOException(newFilePath + " already exists!");
 				}
 
@@ -360,7 +368,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				try {
 					// After changing the conde in this block, revise the
 					// exception documentaion above.
-					scriptWriter = new StreamWriter(newFilePath);
+					scriptWriter = new StreamWriter(newFilePath, append: false);
 					scriptWriter.Write(newScriptContents + TemplateNewLine);
 
 					// Append the meta data.

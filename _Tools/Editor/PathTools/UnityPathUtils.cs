@@ -28,11 +28,11 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 	/// <summary>
 	/// Utilities to make working with Unity paths easier.
-	/// 
+	///
 	/// These are not intended to be bullet-proof...when working with relative
 	/// paths, these are paths which AssetDatabase will return. (i.e. they
 	/// always start with the "Assets" folder.)
-	/// 
+	///
 	/// Absolute paths include the path of the project. These are to be used
 	/// with C# things.
 	/// </summary>
@@ -58,6 +58,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <returns>Returns true if absolute path was given.</returns>
 		/// <param name="path">Path to check.</param>
 		public static bool IsAbsoluteProjectPath(string path) {
+
 			return path.StartsWith(
 				Application.dataPath,
 				System.StringComparison.CurrentCulture
@@ -114,7 +115,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Given a path, checks if it would be part of the Editor assembly.
 		/// (That is, if it has a folder named "Editor" in its path.) If not,
 		/// the Editor folder is appended to the path.
-		/// 
+		///
 		/// No checks are done to ensure that the folders actually exist, nor
 		/// are any folders created.
 		/// </summary>
@@ -148,7 +149,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Combines the two paths. If path2 is an absolute path (of any kind),
 		/// path2 is returned. (It's assumed that they cannot be combined in
 		/// this case.)
-		/// 
+		///
 		/// Otherwise, path2 is appended to path1. A '/' is used as the
 		/// delimiter, as Unity uses this one primarily.
 		/// </summary>
