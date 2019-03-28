@@ -327,12 +327,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			// even matches what we need.
 			if(template.IsCompatibleWith(metaData.ParsedReferability)) {
 
-				string templatePath = template.path;    // Path of the template file
-
-				string newFileName = ReplaceTemplatePlaceholders(
-					Path.GetFileNameWithoutExtension(templatePath),
-					metaData
-				) + ".cs";
+				string templateName = Path.GetFileNameWithoutExtension(template.path);
+				string newFileName = metaData.ApplyReplacements(templateName) + ".cs";
 
 				newFilePath = UnityPathUtils.Combine(
 					(template.IsEngineTemplate ? normalPath : editorPath),
@@ -348,7 +344,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				try {
 					// After changing the conde in this block, revise the
 					// exception documentaion above.
-					templateReader = new StreamReader(templatePath);
+					templateReader = new StreamReader(template.path);
 					templateContents = templateReader.ReadToEnd();
 				}
 				finally {
@@ -358,10 +354,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				}
 
 
-				string newScriptContents = ReplaceTemplatePlaceholders(
-					templateContents,
-					metaData
-				);
+				string newScriptContents = metaData.ApplyReplacements(templateContents);
 
 
 				StreamWriter scriptWriter = null;
@@ -421,36 +414,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 			} // End foreach
 		} // End AddLabels
 
-
-		/// <summary>
-		/// Replaces the placeholder text in the templateText string with the
-		/// strings passed in.
-		/// </summary>
-		/// <returns>The built template.</returns>
-		/// <param name="templateText">Template text.</param>
-		/// <param name="metaData">Metadata used for replacing stuff.</param>
-		private static string ReplaceTemplatePlaceholders(
-			string templateText,
-			ScriptMetaData metaData
-		) {
-			const string NamePlaceholder = "@Name@";
-			const string TypePlaceholder = "@Type@";
-			const string ReferablePlaceholder = "@Referable@";
-			const string OrderPlaceholder = "@Order@";
-
-
-			Dictionary<string, string> substitutionTargets = new Dictionary<string, string>();
-			substitutionTargets[NamePlaceholder] = metaData.name;
-			substitutionTargets[TypePlaceholder] = metaData.type;
-			substitutionTargets[ReferablePlaceholder] = metaData.ParsedReferability.ToString();
-			substitutionTargets[OrderPlaceholder] = metaData.menuOrder.ToString();
-
-			foreach(KeyValuePair<string, string> target in substitutionTargets) {
-				templateText = Regex.Replace(templateText, target.Key, target.Value);
-			}
-
-			return templateText;
-		}
 #endregion
 
 

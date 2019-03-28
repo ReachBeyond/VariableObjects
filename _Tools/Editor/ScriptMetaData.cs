@@ -20,7 +20,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using UnityEngine;
-using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace ReachBeyond.VariableObjects.Editor {
 
@@ -79,6 +80,38 @@ namespace ReachBeyond.VariableObjects.Editor {
 				return result;
 			}
 		} // End field
+
+		#region Substitutions
+		/// <summary>
+		/// Creates a dictionary which can be used for substituting our metadata
+		/// into a string. Currently respects @Name@, @Type@, @Referable@, and
+		/// @Order@.
+		/// </summary>
+		public Dictionary<string, string> SubstitutionRules {
+			get {
+				Dictionary<string, string> substitutionTargets = new Dictionary<string, string>();
+				substitutionTargets["@Name@"] = name;
+				substitutionTargets["@Type@"] = type;
+				substitutionTargets["@Referable@"] = ParsedReferability.ToString();
+				substitutionTargets["@Order@"] = menuOrder.ToString();
+
+				return substitutionTargets;
+			}
+		}
+
+		/// <summary>
+		/// Applies the substitutions from SubstitutionDictionary.
+		/// </summary>
+		/// <param name="templateText">The text with the templates.</param>
+		/// <returns></returns>
+		public string ApplyReplacements(string templateText) {
+			foreach(KeyValuePair<string, string> rule in SubstitutionRules) {
+				templateText = Regex.Replace(templateText, rule.Key, rule.Value);
+			}
+
+			return templateText;
+		}
+		#endregion
 
 	} // End struct
 } // End namespace
