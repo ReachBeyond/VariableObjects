@@ -30,7 +30,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// Note that it does not track the script's location; it only tracks
 	/// info held within a script's JSON metadata.
 	///
-	/// This can be converted to and from JSON easily.
+	/// This can be converted to and from JSON easily. It can also be
+	/// used to apply changes to templated strings.
 	/// </summary>
 	[System.Serializable]
 	public struct ScriptMetaData {
@@ -103,7 +104,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Applies the substitutions from SubstitutionDictionary.
 		/// </summary>
 		/// <param name="templateText">The text with the templates.</param>
-		/// <returns></returns>
+		/// <returns>The templateText with all fields replaced.</returns>
 		public string ApplyReplacements(string templateText) {
 			foreach(KeyValuePair<string, string> rule in SubstitutionRules) {
 				templateText = Regex.Replace(templateText, rule.Key, rule.Value);
