@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/@Name@")]
+	[CreateAssetMenu(menuName="Variable/@Name@", order = @Order@)]
 	public class @Name@Variable : Base.@Referable@Variable<@Type@> {}
 
 	[System.Serializable]

@@ -37,9 +37,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 	public static class VariableTypeBuilder {
 
 		#region Placeholder Strings
-		private const string NamePlaceholder = "@Name@";
-		private const string TypePlaceholder = "@Type@";
-		private const string ReferablePlaceholder = "@Referable@";
 
 		/// <summary>
 		/// This is used because the line endings in the templates need to be
@@ -436,17 +433,21 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string templateText,
 			ScriptMetaData metaData
 		) {
-			templateText = Regex.Replace(
-				templateText, NamePlaceholder, metaData.name
-			);
+			const string NamePlaceholder = "@Name@";
+			const string TypePlaceholder = "@Type@";
+			const string ReferablePlaceholder = "@Referable@";
+			const string OrderPlaceholder = "@Order@";
 
-			templateText = Regex.Replace(
-				templateText, TypePlaceholder, metaData.type
-			);
 
-			templateText = Regex.Replace(
-				templateText, ReferablePlaceholder, metaData.ParsedReferability.ToString()
-			);
+			Dictionary<string, string> substitutionTargets = new Dictionary<string, string>();
+			substitutionTargets[NamePlaceholder] = metaData.name;
+			substitutionTargets[TypePlaceholder] = metaData.type;
+			substitutionTargets[ReferablePlaceholder] = metaData.ParsedReferability.ToString();
+			substitutionTargets[OrderPlaceholder] = metaData.menuOrder.ToString();
+
+			foreach(KeyValuePair<string, string> target in substitutionTargets) {
+				templateText = Regex.Replace(templateText, target.Key, target.Value);
+			}
 
 			return templateText;
 		}

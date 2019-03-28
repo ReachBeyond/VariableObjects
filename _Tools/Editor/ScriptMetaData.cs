@@ -41,13 +41,15 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public string name;
 		public string type;
 		public string referability;
+		public int menuOrder;
 		#endregion
 
 		#region Constructors
-		public ScriptMetaData(string name, string type, ReferabilityMode referability) {
+		public ScriptMetaData(string name, string type, ReferabilityMode referability, int menuOrder = 20000) {
 			this.name = name;
 			this.type = type;
 			this.referability = referability.ToString();
+			this.menuOrder = menuOrder;
 		}
 		#endregion
 
