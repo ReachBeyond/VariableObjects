@@ -125,7 +125,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		}
 		#endregion
 
-		#region Functions
+
 		public void AddGUID(string newGUID) {
 			if(!string.IsNullOrEmpty(newGUID) && !_GUIDs.Contains(newGUID)) {
 				_GUIDs.Add(newGUID);
@@ -133,6 +133,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		}
 
 
+		#region File set manipulators
 		/// <summary>
 		/// Deletes each file associated with this set of scripts. This has
 		/// no prompting and uses AssetDatabase to delete the files.
@@ -140,6 +141,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// It will also clean up empty editor folders. This could result in
 		/// weird side effects if the user has many editor folder strewn
 		/// about.
+		///
+		/// Be warned that this is NOT instant, as it relies on
+		/// AssetDatabase.DeleteAsset. This will queue up the deletions
+		/// on one of Unity's other threads.
 		/// </summary>
 		public void DeleteFiles() {
 
@@ -175,6 +180,24 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		/// <returns>The paths of the new/modified files.</returns>
 		public List<string> RebuildFiles() {
+			return RebuildFiles(MetaData);
+		}
+
+		/// <summary>
+		/// Rebuild the files associated with this type based upon its meta data.
+		/// This can potentially delete scripts if the templates don't
+		/// explicitly build them.
+		///
+		/// Scripts are dumped into the folder pointed to by DominantPath.
+		/// </summary>
+		/// <param name="newMetaData">
+		/// The new metadata to use. This simply means that the new scripts
+		/// will use this metadata, and then we'll delete old scripts which
+		/// haven't been overriden. It does NOT mean that files will get
+		/// renamed.
+		/// </param>
+		/// <returns>The paths of the new/modified files.</returns>
+		public List<string> RebuildFiles(ScriptMetaData newMetaData) {
 
 			// We'll save the file paths for later... we can never really
 			// trust that things won't get updated after we modify the files.
@@ -186,7 +209,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 
 			List<string> resultFiles = VariableTypeBuilder.CreateNewVariableType(
-				MetaData,
+				newMetaData,
 				UnityPathUtils.AbsoluteToRelative(DominantPath),
 				overrideExisting: true
 			);
@@ -203,6 +226,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			return resultFiles;
 		}
 
+		#endregion
+
 		public override string ToString () {
 			string filePaths = "";
 
@@ -216,7 +241,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				"Referability: " + Referability.ToString() + '\n' +
 				filePaths );
 		}
-		#endregion
+
 	} // End of class
 
 } // End of namespace

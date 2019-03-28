@@ -164,11 +164,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 							fileInfo.DeleteFiles();
 						}
 					}
+					else if(foldoutInfo.selectedEdit) {
+						NewVariableTypeWizard.CreateWizard(fileInfo);
+					}
 					else if(foldoutInfo.selectedRemake) {
 
 						bool remakeConfirmed = EditorUtility.DisplayDialog(
 							"Remake variable object scripts named '" + fileInfo.Name + "'?",
-							"They will be placed inside " + fileInfo.DominantPath +"\n"
+							"They will be placed inside " + fileInfo.DominantPath + "\n"
 							+ "This action cannot be undone!\n"
 							+ "(Check Variable Object Settings for list of files.)",
 							"Remake them", "Maybe not"

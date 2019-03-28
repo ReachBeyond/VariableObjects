@@ -409,7 +409,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 					);
 #endif
 
-
 				} // End if
 			} // End foreach
 		} // End AddLabels

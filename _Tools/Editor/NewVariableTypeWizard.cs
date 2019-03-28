@@ -80,6 +80,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 		[SerializeField] private UnityFolderPath targetFolder;
 		#endregion
 
+		#region Variables and Properties
+		private ScriptSetInfo editTarget;
+
+		public bool InEditMode {
+			get {
+				// If we have an editTarget, then we're certainly
+				// in edit mode.
+				return editTarget != null;
+			}
+		}
+		#endregion
+
 		#region Factories
 		/// <summary>
 		/// Creates a new instance of the wizard with blank fields.
@@ -93,30 +105,63 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		[MenuItem("Window/Create new Variable Object Type...")]
 		public static void CreateWizard() {
-			string previousPath = EditorPrefs.GetString(PathPref);
+			//string previousPath = EditorPrefs.GetString(PathPref);
 
-			CreateWizard("", "", ReferabilityMode.Unknown, previousPath);
+			//CreateWizard("", "", ReferabilityMode.Unknown, previousPath);
+			CreateWizard(null);
 		}
 
-		public static void CreateWizard(
-			string initName,
-			string initType,
-			ReferabilityMode initMode,
-			string initPath
-		) {
-			NewVariableTypeWizard wizard =
-				ScriptableWizard.DisplayWizard<NewVariableTypeWizard>(
-					"Create Variable Object Type", "Create"
-				);
+		/// <summary>
+		/// Similar to the wizard parameterless version, but this wizard
+		/// can work in one of two ways:
+		///
+		///  editTarget == null: A new variable type will be created
+		///  editTarget != null: An old variable type will be overridden.
+		///
+		/// Unless the goal is to pass in non-null editTarget, call this
+		/// without parameters.
+		/// </summary>
+		/// <param name="editTarget">
+		/// Script set to override, if not null.
+		/// </param>
+		public static void CreateWizard(ScriptSetInfo editTarget) {
+			NewVariableTypeWizard wizard = DisplayWizard<NewVariableTypeWizard>(
+				"Create Variable Object Type", "Create"
+			);
 
-			wizard.humanReadableName = initName;
-			wizard.dataType = initType;
-			wizard.referability = initMode;
-			wizard.targetFolder = new UnityFolderPath(initPath);
+			if(editTarget != null) {
+				wizard.humanReadableName = editTarget.Name;
+				wizard.dataType = editTarget.TypeName;
+				wizard.referability = editTarget.Referability;
+				wizard.targetFolder = new UnityFolderPath(editTarget.DominantPath);
+			}
+			else {
+				wizard.humanReadableName = "";
+				wizard.dataType = "";
+				wizard.referability = ReferabilityMode.Unknown;
+				wizard.targetFolder = new UnityFolderPath(EditorPrefs.GetString(PathPref));
+			}
+
+			wizard.editTarget = editTarget;
+
 
 			// Force a update...it's possible that, with the parameters we've
 			// passed in, it's valid. Otherwise, it won't detect that it's valid
 			// until the user changes ones of the fields.
+			wizard.OnWizardUpdate();
+		}
+
+		public static void ReopenWizard(NewVariableTypeWizard oldWizard) {
+			NewVariableTypeWizard wizard = DisplayWizard<NewVariableTypeWizard>(
+				"Create Variable Object Type", "Create"
+			);
+
+			wizard.humanReadableName = oldWizard.humanReadableName;
+			wizard.dataType = oldWizard.dataType;
+			wizard.referability = oldWizard.referability;
+			wizard.targetFolder = oldWizard.targetFolder;
+			wizard.editTarget = oldWizard.editTarget;
+
 			wizard.OnWizardUpdate();
 		}
 		#endregion
@@ -126,10 +171,19 @@ namespace ReachBeyond.VariableObjects.Editor {
 		private void OnWizardCreate() {
 
 			try {
-				VariableTypeBuilder.CreateNewVariableType(
-					new ScriptMetaData(humanReadableName, dataType, referability),
-					targetFolder.Path
+				ScriptMetaData newMetaData = new ScriptMetaData(
+					humanReadableName, dataType, referability
 				);
+
+				if(InEditMode) {
+					editTarget.RebuildFiles(newMetaData);
+				}
+				else {
+					VariableTypeBuilder.CreateNewVariableType(
+						newMetaData,
+						targetFolder.Path
+					);
+				}
 
 				// It worked, so we can go ahead and save the path now
 				EditorPrefs.SetString(PathPref, targetFolder.Path);
@@ -143,7 +197,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 				);
 
 				// Re-open the menu.
-				CreateWizard(humanReadableName, dataType, referability, targetFolder.Path);
+				//CreateWizard(humanReadableName, dataType, referability, targetFolder.Path);
+				ReopenWizard(this);
 			}
 
 		}
@@ -166,7 +221,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 					"The Human Readable Name is not a valid C# variable" +
 					" name!\n";
 			}
-			else if(ScriptSetManager.IsNameTaken(humanReadableName)) {
+			else if(ScriptSetManager.IsNameTaken(humanReadableName)
+				&& !(InEditMode && humanReadableName == editTarget.Name)
+			) {
+
 				errorMsg +=
 					"The Human Readable Name conflicts with another," +
 					" already existing variable type!\n";

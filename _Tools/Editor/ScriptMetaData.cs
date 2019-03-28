@@ -36,7 +36,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	[System.Serializable]
 	public struct ScriptMetaData {
 
-		#region Variables
+		#region Variables and Properties
 		// NOTE: Careful with renaming these. This will break
 		//       the parsing process. All the files would need
 		//       to be changed... a simple refactor won't work.
@@ -44,6 +44,23 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public string type;
 		public string referability;
 		public int menuOrder;
+
+		/// <summary>
+		/// Attempts to parse the referabilityName as a ReferabilityMode
+		/// enum. If the parsing fails, ReferabilityMode.Unknown is
+		/// returned.
+		/// </summary>
+		public ReferabilityMode ParsedReferability {
+			get {
+				ReferabilityMode result;
+
+				if(!System.Enum.TryParse(referability, true, out result)) {
+					result = ReferabilityMode.Unknown;
+				}
+
+				return result;
+			}
+		} // End field
 		#endregion
 
 		#region Constructors
@@ -64,23 +81,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 			return JsonUtility.ToJson(this, prettyPrint: true);
 		}
 		#endregion
-
-		/// <summary>
-		/// Attempts to parse the referabilityName as a ReferabilityMode
-		/// enum. If the parsing fails, ReferabilityMode.Unknown is
-		/// returned.
-		/// </summary>
-		public ReferabilityMode ParsedReferability {
-			get {
-				ReferabilityMode result;
-
-				if(!System.Enum.TryParse(referability, true, out result)) {
-					result = ReferabilityMode.Unknown;
-				}
-
-				return result;
-			}
-		} // End field
 
 		#region Substitutions
 		/// <summary>
