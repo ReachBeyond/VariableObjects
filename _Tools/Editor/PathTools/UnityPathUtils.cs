@@ -45,12 +45,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <returns>Absolute path to the project's assets folder.</returns>
 		public static string ProjectPath {
 			get {
-				// Application.dataPath is INCONSISTENT!
-				// We need to make sure that the directory separators
-				// match the system default. Otherwise, it will use
-				// the Unix scheme ('/') instead of the Windows scheme
-				// ('\') on any system. THIS IS BAD!!!
-				return Regex.Replace(Application.dataPath, "[/\\\\]", "" + Path.DirectorySeparatorChar);
+				return LocalizeDirectorySeparators(Application.dataPath);
 			}
 		}
 
@@ -185,6 +180,16 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 				return path1 + Path.DirectorySeparatorChar + path2;
 			}
+		}
+
+		/// <summary>
+		/// For whatever path string is given, this will convert it to
+		/// use Path.DIrectorySeparatorChar.
+		/// </summary>
+		/// <param name="path">Path to localize.</param>
+		/// <returns>The localized path.</returns>
+		public static string LocalizeDirectorySeparators(string path) {
+			return Regex.Replace( path, "[/\\\\]", "" + Path.DirectorySeparatorChar );
 		}
 
 

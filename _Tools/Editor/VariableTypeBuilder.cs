@@ -114,7 +114,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// If true, this will NOT check for scripts which already exist, and will
 		/// happilly override whatever it finds. This will NOT change GUIDs.
 		/// </param>
-		public static void CreateNewVariableType(
+		///
+		/// <returns>A list of all the files created.</returns>
+		public static List<string> CreateNewVariableType(
 			ScriptMetaData metaData,
 			string targetPath,
 			bool overrideExisting = false
@@ -283,6 +285,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 
 			SetFileLabels(newFilePaths.ToArray());
+
+			return new List<string>(newFilePaths);
 
 		} // End CreateNewVariableType
 

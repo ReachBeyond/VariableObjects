@@ -175,7 +175,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 						);
 
 						if(remakeConfirmed) {
-							fileInfo.RebuildFiles();
+							List<string> modifiedFiles = fileInfo.RebuildFiles();
+
 						}
 					}
 				} // End foreach(...fileInfo...)

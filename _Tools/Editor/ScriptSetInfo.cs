@@ -166,27 +166,41 @@ namespace ReachBeyond.VariableObjects.Editor {
 			} // End if
 		} // End DeleteFiles
 
-		public void RebuildFiles() {
-			// We need to save this because DominantPath doesn't work if there
-			// are no files to look at!
-			//string path = DominantPath;
+		/// <summary>
+		/// Rebuild the files associated with this type based upon its meta data.
+		/// This can potentially delete scripts if the templates don't
+		/// explicitly build them.
+		///
+		/// Scripts are dumped into the folder pointed to by DominantPath.
+		/// </summary>
+		/// <returns>The paths of the new/modified files.</returns>
+		public List<string> RebuildFiles() {
 
-			//DeleteFiles();
+			// We'll save the file paths for later... we can never really
+			// trust that things won't get updated after we modify the files.
+			string[] origPaths = GUIDs;
+			for(int i = 0; i < origPaths.Length; i++) {
+				origPaths[i] = UnityPathUtils.LocalizeDirectorySeparators(
+					AssetDatabase.GUIDToAssetPath(origPaths[i])
+				);
+			}
 
-			//yield return new WaitWhile(() => ScriptSetManager.IsNameTaken(Name));
-
-			//while(ScriptSetManager.IsNameTaken(Name)) {
-
-			//}
-
-			VariableTypeBuilder.CreateNewVariableType(
+			List<string> resultFiles = VariableTypeBuilder.CreateNewVariableType(
 				MetaData,
 				UnityPathUtils.AbsoluteToRelative(DominantPath),
 				overrideExisting: true
 			);
 
-			//AssemblyReloadEvents.afterAssemblyReload +=
+			// Once we perform the reset, we'll want to clean up any extra files
+			// which were not in our set of templates. If we find any,
+			// we'll make sure to delete 'em and get everything cleaned up.
+			foreach(string origPath in origPaths) {
+				if(!resultFiles.Contains(origPath)) {
+					AssetDatabase.DeleteAsset(origPath);
+				}
+			}
 
+			return resultFiles;
 		}
 
 		public override string ToString () {
