@@ -281,7 +281,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 				AssetDatabase.Refresh();
 			}
 
-			SetFileLabels(newFilePaths.ToArray());
+			string label = metaData.builtin ? ScriptSetManager.UnityLabel : ScriptSetManager.CustomLabel;
+			SetFileLabels( newFilePaths.ToArray(), label );
 
 			return new List<string>(newFilePaths);
 
@@ -390,24 +391,30 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// It's probably best to reload before running this.
 		/// </summary>
 		/// <param name="paths">File paths.</param>
-		private static void SetFileLabels(string[] paths) {
+		private static void SetFileLabels(string[] paths, string label) {
 			foreach(string path in paths) {
 
 				if(!AssetDatabase.IsValidFolder(path)) {
 					UnityEngine.Object newFileObj =
 						AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
 
+					AssetDatabase.SetLabels( newFileObj, new string[] { label } );
+
+					// TODO Make this be an option that gets passed in
+					/*
 #if REACHBEYOND_VAROBJ_BUILTIN_MODE
 					AssetDatabase.SetLabels(
 						newFileObj,
-						new string[] { ScriptFileManager.UnityLabel }
+						new string[] { ScriptSetManager.UnityLabel }
 					);
 #else
 					AssetDatabase.SetLabels(
 						newFileObj,
 						new string[] { ScriptSetManager.CustomLabel }
 					);
+
 #endif
+					*/
 
 				} // End if
 			} // End foreach

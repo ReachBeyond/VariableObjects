@@ -22,6 +22,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System;
 
 namespace ReachBeyond.VariableObjects.Editor {
 
@@ -34,7 +35,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 	/// used to apply changes to templated strings.
 	/// </summary>
 	[System.Serializable]
-	public struct ScriptMetaData {
+	public struct ScriptMetaData : IEquatable<ScriptMetaData> {
 
 		#region Variables and Properties
 		// NOTE: Careful with renaming these. This will break
@@ -44,6 +45,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		public string type;
 		public string referability;
 		public int menuOrder;
+		public bool builtin;
 
 		/// <summary>
 		/// Attempts to parse the referabilityName as a ReferabilityMode
@@ -64,13 +66,16 @@ namespace ReachBeyond.VariableObjects.Editor {
 		#endregion
 
 		#region Constructors
-		public ScriptMetaData(string name, string type, ReferabilityMode referability, int menuOrder = 20000) {
+		public ScriptMetaData(string name, string type, ReferabilityMode referability, int menuOrder = 20000, bool builtin = false) {
 			this.name = name;
 			this.type = type;
 			this.referability = referability.ToString();
 			this.menuOrder = menuOrder;
+			this.builtin = builtin;
 		}
 		#endregion
+
+
 
 		#region JSON conversions
 		public static ScriptMetaData FromJson(string rawJson) {
@@ -111,6 +116,46 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 
 			return templateText;
+		}
+		#endregion
+
+		#region Operators
+
+		// Everything here was auto-generated. Leave this as the last region;
+		// Visual Studio always dumps the auto-generated code here.
+
+		public override bool Equals(object obj) {
+			return obj is ScriptMetaData && Equals((ScriptMetaData) obj);
+		}
+
+		public bool Equals(ScriptMetaData other) {
+			return name == other.name &&
+				   type == other.type &&
+				   referability == other.referability &&
+				   menuOrder == other.menuOrder &&
+				   builtin == other.builtin;
+		}
+
+		public override int GetHashCode() {
+			var hashCode = 255998238;
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(name);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(type);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(referability);
+			hashCode = hashCode * -1521134295 + menuOrder.GetHashCode();
+			hashCode = hashCode * -1521134295 + builtin.GetHashCode();
+			return hashCode;
+		}
+
+		public override string ToString() {
+			return base.ToString() + '\n' + ToJson();
+		}
+
+		public static bool operator ==(ScriptMetaData data1, ScriptMetaData data2) {
+			return data1.Equals(data2);
+		}
+
+		public static bool operator !=(ScriptMetaData data1, ScriptMetaData data2) {
+			return !(data1 == data2);
 		}
 		#endregion
 

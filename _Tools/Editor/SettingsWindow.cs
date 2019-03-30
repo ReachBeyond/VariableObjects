@@ -184,9 +184,13 @@ namespace ReachBeyond.VariableObjects.Editor {
 					}
 				} // End foreach(...fileInfo...)
 
+				if(GUILayout.Button("Rebuild all")) {
+					Debug.Log("Ooof");
+				}
+
 				EditorGUI.indentLevel--;
-			}
-		}
+			} // End if(isFoldedOut)
+		} // End DrawVarObjHierarchy
 
 
 		/// <summary>

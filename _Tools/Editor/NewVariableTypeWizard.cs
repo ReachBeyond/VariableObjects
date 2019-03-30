@@ -72,6 +72,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 		)]
 		[SerializeField] private ReferabilityMode referability;
 
+		[SerializeField] private int menuOrder;
+
 		[Tooltip(
 			"Folder to put the scripts in. Must be in the current project's assets folder, " +
 			"and cannot be in an 'Editor' folder. This may create an Editor folder in the " +
@@ -133,12 +135,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 				wizard.humanReadableName = editTarget.Name;
 				wizard.dataType = editTarget.TypeName;
 				wizard.referability = editTarget.Referability;
+				wizard.menuOrder = editTarget.MetaData.menuOrder;
 				wizard.targetFolder = new UnityFolderPath(editTarget.DominantPath);
 			}
 			else {
 				wizard.humanReadableName = "";
 				wizard.dataType = "";
 				wizard.referability = ReferabilityMode.Unknown;
+				wizard.menuOrder = 350000;
 				wizard.targetFolder = new UnityFolderPath(EditorPrefs.GetString(PathPref));
 			}
 
@@ -159,6 +163,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			wizard.humanReadableName = oldWizard.humanReadableName;
 			wizard.dataType = oldWizard.dataType;
 			wizard.referability = oldWizard.referability;
+			wizard.menuOrder = oldWizard.menuOrder;
 			wizard.targetFolder = oldWizard.targetFolder;
 			wizard.editTarget = oldWizard.editTarget;
 
