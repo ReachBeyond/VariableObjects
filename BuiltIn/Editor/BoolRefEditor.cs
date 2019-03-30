@@ -38,6 +38,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 {
     "name": "Bool",
     "type": "bool",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350000,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

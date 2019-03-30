@@ -41,6 +41,8 @@ namespace ReachBeyond.VariableObjects {
 {
     "name": "Vector2Int",
     "type": "Vector2Int",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350000,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

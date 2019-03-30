@@ -41,6 +41,8 @@ namespace ReachBeyond.VariableObjects {
 {
     "name": "Transform",
     "type": "Transform",
-    "referability": "Class"
+    "referability": "Class",
+    "menuOrder": 350000,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */
