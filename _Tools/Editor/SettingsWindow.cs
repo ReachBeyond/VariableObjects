@@ -185,7 +185,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 				} // End foreach(...fileInfo...)
 
 				if(GUILayout.Button("Rebuild all")) {
-					Debug.Log("Ooof");
+
+					bool remakeConfirmed = EditorUtility.DisplayDialog(
+						"Remake all " + masterLabel,
+						"Remake ALL of the scripts? This could break things if you aren't careful!",
+						"Remake them all!", "Hang on!"
+					);
+
+					if(remakeConfirmed) {
+						foreach(ScriptSetInfo setInfo in fileInfoDictionary.Values) {
+							setInfo.RebuildFiles();
+						}
+					}
 				}
 
 				EditorGUI.indentLevel--;

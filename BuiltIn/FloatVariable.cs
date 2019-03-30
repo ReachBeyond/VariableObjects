@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Float", order = -20098)]
+	[CreateAssetMenu(menuName="Variable/Float", order = 350000)]
 	public class FloatVariable : Base.StructVariable<float> {}
 
 	[System.Serializable]
@@ -34,7 +34,6 @@ namespace ReachBeyond.VariableObjects {
 	public class FloatConstReference : Base.ConstReference<float, FloatVariable> {}
 
 }
-
 
 
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **

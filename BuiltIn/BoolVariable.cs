@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Bool", order = -20099)]
+	[CreateAssetMenu(menuName="Variable/Bool", order = 350000)]
 	public class BoolVariable : Base.StructVariable<bool> {}
 
 	[System.Serializable]
@@ -34,7 +34,6 @@ namespace ReachBeyond.VariableObjects {
 	public class BoolConstReference : Base.ConstReference<bool, BoolVariable> {}
 
 }
-
 
 
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **

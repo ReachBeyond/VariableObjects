@@ -33,7 +33,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "Int",

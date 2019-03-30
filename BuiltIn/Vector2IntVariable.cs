@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Vector2Int", order = -20039)]
+	[CreateAssetMenu(menuName="Variable/Vector2Int", order = 350000)]
 	public class Vector2IntVariable : Base.StructVariable<Vector2Int> {}
 
 	[System.Serializable]
@@ -34,7 +34,6 @@ namespace ReachBeyond.VariableObjects {
 	public class Vector2IntConstReference : Base.ConstReference<Vector2Int, Vector2IntVariable> {}
 
 }
-
 
 
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **

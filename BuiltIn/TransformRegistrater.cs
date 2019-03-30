@@ -27,7 +27,6 @@ namespace ReachBeyond.VariableObjects {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "Transform",

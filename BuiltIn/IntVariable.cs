@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Int", order=-20097)]
+	[CreateAssetMenu(menuName="Variable/Int", order = 350000)]
 	public class IntVariable : Base.StructVariable<int> {}
 
 	[System.Serializable]
@@ -34,7 +34,6 @@ namespace ReachBeyond.VariableObjects {
 	public class IntConstReference : Base.ConstReference<int, IntVariable> {}
 
 }
-
 
 
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **

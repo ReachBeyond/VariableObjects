@@ -84,6 +84,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 		#region Variables and Properties
 		private ScriptSetInfo editTarget;
+		private bool builtin;
 
 		public bool InEditMode {
 			get {
@@ -136,6 +137,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				wizard.dataType = editTarget.TypeName;
 				wizard.referability = editTarget.Referability;
 				wizard.menuOrder = editTarget.MetaData.menuOrder;
+				wizard.builtin = false;
 				wizard.targetFolder = new UnityFolderPath(editTarget.DominantPath);
 			}
 			else {
@@ -143,6 +145,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				wizard.dataType = "";
 				wizard.referability = ReferabilityMode.Unknown;
 				wizard.menuOrder = 350000;
+				wizard.builtin = editTarget.MetaData.builtin;
 				wizard.targetFolder = new UnityFolderPath(EditorPrefs.GetString(PathPref));
 			}
 
@@ -166,6 +169,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			wizard.menuOrder = oldWizard.menuOrder;
 			wizard.targetFolder = oldWizard.targetFolder;
 			wizard.editTarget = oldWizard.editTarget;
+			wizard.builtin = oldWizard.builtin;
 
 			wizard.OnWizardUpdate();
 		}
