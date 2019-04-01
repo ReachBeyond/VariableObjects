@@ -32,7 +32,7 @@ namespace ReachBeyond.VariableObjects {
     "name": "GameObject",
     "type": "GameObject",
     "referability": "Class",
-    "menuOrder": 350000,
+    "menuOrder": 350020,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

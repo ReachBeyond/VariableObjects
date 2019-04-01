@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/GameObject", order = 350000)]
+	[CreateAssetMenu(menuName="Variable/GameObject", order = 350020)]
 	public class GameObjectVariable : Base.ClassVariable<GameObject> {}
 
 	[System.Serializable]
@@ -41,7 +41,7 @@ namespace ReachBeyond.VariableObjects {
     "name": "GameObject",
     "type": "GameObject",
     "referability": "Class",
-    "menuOrder": 350000,
+    "menuOrder": 350020,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

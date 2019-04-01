@@ -38,7 +38,7 @@ namespace ReachBeyond.VariableObjects.Editor {
     "name": "Vector2Int",
     "type": "Vector2Int",
     "referability": "Struct",
-    "menuOrder": 350000,
+    "menuOrder": 350100,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

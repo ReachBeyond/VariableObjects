@@ -137,7 +137,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				wizard.dataType = editTarget.TypeName;
 				wizard.referability = editTarget.Referability;
 				wizard.menuOrder = editTarget.MetaData.menuOrder;
-				wizard.builtin = false;
+				wizard.builtin = editTarget.MetaData.builtin;
 				wizard.targetFolder = new UnityFolderPath(editTarget.DominantPath);
 			}
 			else {
@@ -145,8 +145,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 				wizard.dataType = "";
 				wizard.referability = ReferabilityMode.Unknown;
 				wizard.menuOrder = 350000;
-				wizard.builtin = editTarget.MetaData.builtin;
+				wizard.builtin = false;
 				wizard.targetFolder = new UnityFolderPath(EditorPrefs.GetString(PathPref));
+
 			}
 
 			wizard.editTarget = editTarget;
@@ -181,7 +182,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 			try {
 				ScriptMetaData newMetaData = new ScriptMetaData(
-					humanReadableName, dataType, referability
+					humanReadableName, dataType, referability, menuOrder, builtin
 				);
 
 				if(InEditMode) {

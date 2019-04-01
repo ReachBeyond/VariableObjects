@@ -38,7 +38,7 @@ namespace ReachBeyond.VariableObjects.Editor {
     "name": "LayerMask",
     "type": "LayerMask",
     "referability": "Struct",
-    "menuOrder": 350000,
+    "menuOrder": 350024,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

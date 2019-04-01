@@ -38,7 +38,7 @@ namespace ReachBeyond.VariableObjects.Editor {
     "name": "String",
     "type": "string",
     "referability": "Class",
-    "menuOrder": 350000,
+    "menuOrder": 350005,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

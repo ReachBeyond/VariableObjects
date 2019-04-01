@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/String", order = 350000)]
+	[CreateAssetMenu(menuName="Variable/String", order = 350005)]
 	public class StringVariable : Base.ClassVariable<string> {}
 
 	[System.Serializable]
@@ -41,7 +41,7 @@ namespace ReachBeyond.VariableObjects {
     "name": "String",
     "type": "string",
     "referability": "Class",
-    "menuOrder": 350000,
+    "menuOrder": 350005,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Transform", order = 350000)]
+	[CreateAssetMenu(menuName="Variable/Transform", order = 350022)]
 	public class TransformVariable : Base.ClassVariable<Transform> {}
 
 	[System.Serializable]
@@ -41,7 +41,7 @@ namespace ReachBeyond.VariableObjects {
     "name": "Transform",
     "type": "Transform",
     "referability": "Class",
-    "menuOrder": 350000,
+    "menuOrder": 350022,
     "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */
