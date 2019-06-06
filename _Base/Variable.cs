@@ -49,6 +49,10 @@ namespace ReachBeyond.VariableObjects.Base {
 			this.hideFlags = HideFlags.DontUnloadUnusedAsset;
 		}
 
+		public void ResetToDefault() {
+			StoredValue = _defaultValue;
+		}
+
 		/// <summary>
 		/// Gets or sets the value. Note that setting this ALWAYS raises the event, even if the new value is the same.
 		/// </summary>
