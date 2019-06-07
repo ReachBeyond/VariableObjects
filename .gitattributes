@@ -1,0 +1,8 @@
+
+# Our templates must use LF because the code which copies from the templates
+# inserts lines which use LF instead of CRLF. If the system tries to convert these,
+# then Unity complains a lot when we generate stuff using the templates.
+**/Templates/*.txt text eol=lf
+
+# We're doing this to keep consistent with the line endings in the templates.
+*.cs text eol=lf
