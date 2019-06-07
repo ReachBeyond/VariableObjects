@@ -451,7 +451,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// </summary>
 		/// <returns><c>true</c>, if the name is valid.</returns>
 		/// <param name="targetName">Name to check.</param>
-		public static bool IsValidName(string targetName) {
+		public static bool IsValidName(string targetName, bool permitLoneBuiltin = true) {
 			// IsValidIdentifier is nice, but it blocks out things like 'int'
 			// I'm not sure if there is a better solution to this problem.
 			string[] builtinTypeNames = {
@@ -461,8 +461,21 @@ namespace ReachBeyond.VariableObjects.Editor {
 			};
 
 			string[] nameParts = targetName.Split(new char[] { '.' });
-			return nameParts.All(name => !builtinTypeNames.Contains(name))
-				   && nameParts.All(name => provider.IsValidIdentifier(name));
+
+			if(nameParts.Length == 1) {
+				// There is only one part in the name. If we are told to allow for lone builtin
+				// names, then we will permit this. Otherwise, it will be excluded.
+				return (permitLoneBuiltin && builtinTypeNames.Contains(targetName))
+					   || provider.IsValidIdentifier(targetName);
+			}
+			else {
+				// If there is more than one part in the name, then it takes this format:
+				//   Foods.Fruits.Orange
+				//
+				// We will NOT permit any of the built in type names.
+				return nameParts.All(name => !builtinTypeNames.Contains(name))
+					   && nameParts.All(name => provider.IsValidIdentifier(name));
+			}
 		}
 #endregion
 

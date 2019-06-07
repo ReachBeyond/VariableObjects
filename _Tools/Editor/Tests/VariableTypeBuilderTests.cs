@@ -54,16 +54,30 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		[TestCase("public", false)]
 		[TestCase("void", false)]
 		[TestCase("1man", false)]
+		[TestCase("man1", true)]
 		[TestCase("one man", false)]
 		[TestCase("-hehe", false)]
 		[TestCase("he-he", false)]
 		[TestCase("hehe+", false)]
 		[TestCase("he(he", false)]
+		[TestCase("Some.Specific.Class", true)]
+		[TestCase("Some.int.Class", false)]
+		[TestCase("Some..Class", false)]
 		public void TestValidNameChecking(string name, bool expected) {
 			Assert.That(
 				VariableTypeBuilder.IsValidName(name),
 				Is.EqualTo(expected)
 			);
+		}
+
+		[TestCase("int", true, true)]
+		[TestCase("int", false, false)]
+		[TestCase("intel", true, true)]
+		[TestCase("intel", true, false)]
+		[TestCase("Some.int.Class", false, true)]
+		[TestCase("Some.int.Class", false, false)]
+		public void TestValidNameChecking(string name, bool expected, bool permitBuiltin) {
+
 		}
 
 	} // End class
