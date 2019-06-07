@@ -460,8 +460,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 				"short", "string", "uint", "ulong",   "ushort"
 			};
 
-			return builtinTypeNames.Contains(targetName)
-				   || provider.IsValidIdentifier(targetName);
+			string[] nameParts = targetName.Split(new char[] { '.' });
+			return nameParts.All(name => !builtinTypeNames.Contains(name))
+				   && nameParts.All(name => provider.IsValidIdentifier(name));
 		}
 #endregion
 
