@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/LayerMask")]
+	[CreateAssetMenu(menuName="Variable/LayerMask", order = 350024)]
 	public class LayerMaskVariable : Base.StructVariable<LayerMask> {}
 
 	[System.Serializable]
@@ -36,11 +36,12 @@ namespace ReachBeyond.VariableObjects {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "LayerMask",
     "type": "LayerMask",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350024,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

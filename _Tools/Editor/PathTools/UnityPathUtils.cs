@@ -28,15 +28,26 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 	/// <summary>
 	/// Utilities to make working with Unity paths easier.
-	/// 
+	///
 	/// These are not intended to be bullet-proof...when working with relative
 	/// paths, these are paths which AssetDatabase will return. (i.e. they
 	/// always start with the "Assets" folder.)
-	/// 
+	///
 	/// Absolute paths include the path of the project. These are to be used
 	/// with C# things.
 	/// </summary>
 	public static class UnityPathUtils {
+
+		/// <summary>
+		/// Gets the absolute path to the project's assets folder.
+		/// This will use the current system directory separator.
+		/// </summary>
+		/// <returns>Absolute path to the project's assets folder.</returns>
+		public static string ProjectPath {
+			get {
+				return LocalizeDirectorySeparators(Application.dataPath);
+			}
+		}
 
 		/// <summary>
 		/// Checks if the given path is a relative path. (Relative to the
@@ -58,8 +69,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// <returns>Returns true if absolute path was given.</returns>
 		/// <param name="path">Path to check.</param>
 		public static bool IsAbsoluteProjectPath(string path) {
+
 			return path.StartsWith(
-				Application.dataPath,
+				ProjectPath,
 				System.StringComparison.CurrentCulture
 			);
 		}
@@ -76,7 +88,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			string relPath;
 
 			if(IsAbsoluteProjectPath(absPath)) {
-				relPath = absPath.Remove(0, Application.dataPath.Length);
+				relPath = absPath.Remove(0, ProjectPath.Length);
 				relPath = relPath.TrimStart(new char[] { '/', '\\' });
 				relPath = UnityPathUtils.Combine("Assets", relPath);
 			}
@@ -101,7 +113,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 			if(IsRelativePath(relPath)) {
 				absPath = relPath.Remove(0, "Assets".Length + 1);
 				absPath = absPath.TrimStart(new char[] { '/', '\\' });
-				absPath = UnityPathUtils.Combine(Application.dataPath, absPath);
+				absPath = UnityPathUtils.Combine(ProjectPath, absPath);
 			}
 			else {
 				absPath = relPath;
@@ -114,7 +126,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Given a path, checks if it would be part of the Editor assembly.
 		/// (That is, if it has a folder named "Editor" in its path.) If not,
 		/// the Editor folder is appended to the path.
-		/// 
+		///
 		/// No checks are done to ensure that the folders actually exist, nor
 		/// are any folders created.
 		/// </summary>
@@ -148,9 +160,9 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// Combines the two paths. If path2 is an absolute path (of any kind),
 		/// path2 is returned. (It's assumed that they cannot be combined in
 		/// this case.)
-		/// 
-		/// Otherwise, path2 is appended to path1. A '/' is used as the
-		/// delimiter, as Unity uses this one primarily.
+		///
+		/// Otherwise, path2 is appended to path1. The system folder
+		/// delimiter is used to join these.
 		/// </summary>
 		/// <returns>
 		/// The combined result, i.e. path1 + path2, or path2.
@@ -164,10 +176,20 @@ namespace ReachBeyond.VariableObjects.Editor {
 				return path2;
 			}
 			else {
-				path1 = path1.TrimEnd('/');
+				path1 = path1.TrimEnd(Path.DirectorySeparatorChar);
 
-				return path1 + '/' + path2;
+				return path1 + Path.DirectorySeparatorChar + path2;
 			}
+		}
+
+		/// <summary>
+		/// For whatever path string is given, this will convert it to
+		/// use Path.DIrectorySeparatorChar.
+		/// </summary>
+		/// <param name="path">Path to localize.</param>
+		/// <returns>The localized path.</returns>
+		public static string LocalizeDirectorySeparators(string path) {
+			return Regex.Replace( path, "[/\\\\]", "" + Path.DirectorySeparatorChar );
 		}
 
 

@@ -44,8 +44,13 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 
 		[Test]
 		public void TestAbsoluteToRelative() {
-			string absPath = UnityPathUtils.Combine(Application.dataPath, "Things/test.txt");
-			string relPath = UnityPathUtils.Combine("Assets", "Things/test.txt");
+			// Gotta do this because we need consistent directory separators.
+			string dataPath = Application.dataPath.Replace('/', Path.DirectorySeparatorChar);
+			string basePath = UnityPathUtils.Combine("Things", "test.txt");
+
+			string absPath = UnityPathUtils.Combine( dataPath, basePath );
+			string relPath = UnityPathUtils.Combine( "Assets", basePath );
+
 			Assert.That(
 				UnityPathUtils.AbsoluteToRelative(absPath),
 				Is.EqualTo(relPath)
@@ -54,8 +59,13 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 
 		[Test]
 		public void TestRelativeToAbsolute() {
-			string absPath = UnityPathUtils.Combine(Application.dataPath, "Things/test.txt");
-			string relPath = UnityPathUtils.Combine("Assets", "Things/test.txt");
+			// Gotta do this because we need consistent directory separators.
+			string dataPath = Application.dataPath.Replace('/', Path.DirectorySeparatorChar);
+			string basePath = UnityPathUtils.Combine("Things", "test.txt");
+
+			string absPath = UnityPathUtils.Combine( dataPath, basePath );
+			string relPath = UnityPathUtils.Combine( "Assets", basePath );
+
 			Assert.That(
 				UnityPathUtils.RelativeToAbsolute(relPath),
 				Is.EqualTo(absPath)
@@ -73,6 +83,9 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		[TestCase("Hello/Editor", "Hello/Editor")]
 		[TestCase("Hello/Editor/Foo", "Hello/Editor/Foo")]
 		public void TestGetEditorFolder(string initPath, string expectedPath) {
+			initPath = initPath.Replace('/', Path.DirectorySeparatorChar);
+			expectedPath = expectedPath.Replace('/', Path.DirectorySeparatorChar);
+
 			Assert.That(
 				UnityPathUtils.GetEditorFolder(initPath),
 				Is.EqualTo(expectedPath)
@@ -106,6 +119,11 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		[TestCase("/Hello/", "/Hi", "/Hi")]
 		[TestCase("/Hello/", "Hi", "/Hello/Hi")]
 		public void TestCombine(string path1, string path2, string expected) {
+			
+			path1 = path1.Replace('/', Path.DirectorySeparatorChar);
+			path2 = path2.Replace('/', Path.DirectorySeparatorChar);
+			expected = expected.Replace('/', Path.DirectorySeparatorChar);
+
 			Assert.That(
 				UnityPathUtils.Combine(path1, path2),
 				Is.EqualTo(expected)

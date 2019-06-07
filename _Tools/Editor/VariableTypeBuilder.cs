@@ -37,9 +37,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 	public static class VariableTypeBuilder {
 
 		#region Placeholder Strings
-		private const string NamePlaceholder = "@Name@";
-		private const string TypePlaceholder = "@Type@";
-		private const string ReferablePlaceholder = "@Referable@";
 
 		/// <summary>
 		/// This is used because the line endings in the templates need to be
@@ -109,11 +106,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// target folder is nested in an Editor folder (or is an Editor folder
 		/// itself), a ArgumentOutOfRangeException is thrown instead.
 		/// </param>
-		public static void CreateNewVariableType(
+		///
+		/// <param name="overrideExisting">
+		/// If true, this will NOT check for scripts which already exist, and will
+		/// happilly override whatever it finds. This will NOT change GUIDs.
+		/// </param>
+		///
+		/// <returns>A list of all the files created.</returns>
+		public static List<string> CreateNewVariableType(
 			ScriptMetaData metaData,
-			string targetPath
+			string targetPath,
+			bool overrideExisting = false
 		) {
-
 			// This is the path of the editor folder we'll use to dump our
 			// editor scripts into.
 			string editorPath = UnityPathUtils.GetEditorFolder(targetPath);
@@ -126,7 +130,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					" a C# keyword."
 				);
 			}
-			else if(ScriptSetManager.IsNameTaken(metaData.name)) {
+			else if(ScriptSetManager.IsNameTaken(metaData.name) && !overrideExisting) {
 				throw new System.ArgumentOutOfRangeException(
 					"readableName",
 					"Is already taken by another VariableObject type."
@@ -145,7 +149,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 					"Must be something other than ReferabilityMode.unknown."
 				);
 			}
-			else if(!AssetDatabase.IsValidFolder(targetPath)) {
+			else if(!AssetDatabase.IsValidFolder(targetPath) && !Directory.Exists(targetPath)) {
 				// TODO This seems mildly buggy on Windows. I created a folder
 				//      inside the folder-select prompt and it complained about
 				//      it. Maybe, instead of using AssetDatabase, we should use
@@ -153,7 +157,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 				throw new DirectoryNotFoundException(
 					"targetPath must be pointing to a pre-existing folder. If" +
 					" you want to create a new folder to put the scripts in," +
-					" you must do it before calling CreateNewVariableType."
+					" you must do it before calling CreateNewVariableType." +
+					"(Trying to use: " + targetPath + ")"
 				);
 			}
 			else if(UnityPathUtils.IsInEditorAssembly(targetPath)) {
@@ -240,7 +245,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				foreach(TemplateInfo template in TemplateFileManager.Templates) {
 
 					string newScriptPath = CreateScriptFromTemplate(
-						metaData, template, targetPath, editorPath
+						metaData, template, targetPath, editorPath, overrideExisting
 					);
 
 					// CreateScriptFromTemplate CAN return an empty string if
@@ -276,7 +281,10 @@ namespace ReachBeyond.VariableObjects.Editor {
 				AssetDatabase.Refresh();
 			}
 
-			SetFileLabels(newFilePaths.ToArray());
+			string label = metaData.builtin ? ScriptSetManager.UnityLabel : ScriptSetManager.CustomLabel;
+			SetFileLabels( newFilePaths.ToArray(), label );
+
+			return new List<string>(newFilePaths);
 
 		} // End CreateNewVariableType
 
@@ -308,7 +316,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			ScriptMetaData metaData,
 			TemplateInfo template,
 			string normalPath,
-			string editorPath
+			string editorPath,
+			bool overrideExisting = false
 		) {
 
 			//string templatePath = "";   // Path of the template file
@@ -319,19 +328,15 @@ namespace ReachBeyond.VariableObjects.Editor {
 			// even matches what we need.
 			if(template.IsCompatibleWith(metaData.ParsedReferability)) {
 
-				string templatePath = template.path;    // Path of the template file
-
-				string newFileName = ReplaceTemplatePlaceholders(
-					Path.GetFileNameWithoutExtension(templatePath),
-					metaData
-				) + ".cs";
+				string templateName = Path.GetFileNameWithoutExtension(template.path);
+				string newFileName = metaData.ApplyReplacements(templateName) + ".cs";
 
 				newFilePath = UnityPathUtils.Combine(
 					(template.IsEngineTemplate ? normalPath : editorPath),
 					newFileName
 				);
 
-				if(File.Exists(newFilePath)) {
+				if(File.Exists(newFilePath) && !overrideExisting) {
 					throw new IOException(newFilePath + " already exists!");
 				}
 
@@ -340,7 +345,7 @@ namespace ReachBeyond.VariableObjects.Editor {
 				try {
 					// After changing the conde in this block, revise the
 					// exception documentaion above.
-					templateReader = new StreamReader(templatePath);
+					templateReader = new StreamReader(template.path);
 					templateContents = templateReader.ReadToEnd();
 				}
 				finally {
@@ -350,17 +355,14 @@ namespace ReachBeyond.VariableObjects.Editor {
 				}
 
 
-				string newScriptContents = ReplaceTemplatePlaceholders(
-					templateContents,
-					metaData
-				);
+				string newScriptContents = metaData.ApplyReplacements(templateContents);
 
 
 				StreamWriter scriptWriter = null;
 				try {
 					// After changing the conde in this block, revise the
 					// exception documentaion above.
-					scriptWriter = new StreamWriter(newFilePath);
+					scriptWriter = new StreamWriter(newFilePath, append: false);
 					scriptWriter.Write(newScriptContents + TemplateNewLine);
 
 					// Append the meta data.
@@ -389,56 +391,35 @@ namespace ReachBeyond.VariableObjects.Editor {
 		/// It's probably best to reload before running this.
 		/// </summary>
 		/// <param name="paths">File paths.</param>
-		private static void SetFileLabels(string[] paths) {
+		private static void SetFileLabels(string[] paths, string label) {
 			foreach(string path in paths) {
 
 				if(!AssetDatabase.IsValidFolder(path)) {
 					UnityEngine.Object newFileObj =
 						AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path);
 
+					AssetDatabase.SetLabels( newFileObj, new string[] { label } );
+
+					// TODO Make this be an option that gets passed in
+					/*
 #if REACHBEYOND_VAROBJ_BUILTIN_MODE
 					AssetDatabase.SetLabels(
 						newFileObj,
-						new string[] { ScriptFileManager.UnityLabel }
+						new string[] { ScriptSetManager.UnityLabel }
 					);
 #else
 					AssetDatabase.SetLabels(
 						newFileObj,
 						new string[] { ScriptSetManager.CustomLabel }
 					);
-#endif
 
+#endif
+					*/
 
 				} // End if
 			} // End foreach
 		} // End AddLabels
 
-
-		/// <summary>
-		/// Replaces the placeholder text in the templateText string with the
-		/// strings passed in.
-		/// </summary>
-		/// <returns>The built template.</returns>
-		/// <param name="templateText">Template text.</param>
-		/// <param name="metaData">Metadata used for replacing stuff.</param>
-		private static string ReplaceTemplatePlaceholders(
-			string templateText,
-			ScriptMetaData metaData
-		) {
-			templateText = Regex.Replace(
-				templateText, NamePlaceholder, metaData.name
-			);
-
-			templateText = Regex.Replace(
-				templateText, TypePlaceholder, metaData.type
-			);
-
-			templateText = Regex.Replace(
-				templateText, ReferablePlaceholder, metaData.ParsedReferability.ToString()
-			);
-
-			return templateText;
-		}
 #endregion
 
 

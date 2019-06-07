@@ -208,21 +208,13 @@ namespace ReachBeyond.VariableObjects.Editor {
 					// Only need to do these checks if there was another
 					// object which claimed this name. So there's a chance
 					// we'll see a mismatch in something.
-					if(typeInfo.TypeName != fileData.type) {
-						Debug.LogWarning(
-							"Type mismatch in "
-							+ AssetDatabase.GUIDToAssetPath(guid) + '\n'
-							+ "Expected '" + typeInfo.TypeName
-							+ "' but found '" + fileData.type + "'"
-						);
-					}
 
-					if(typeInfo.Referability != fileData.ParsedReferability) {
+					if(typeInfo.MetaData != fileData) {
 						Debug.LogWarning(
-							"Referability mismatch in "
+							"Metadata mismatch in "
 							+ AssetDatabase.GUIDToAssetPath(guid) + '\n'
-							+ "Expected '" + typeInfo.Referability.ToString()
-							+ "' but found '" + fileData.ParsedReferability.ToString() + "'"
+							+ "Expected:\n" + typeInfo.MetaData + '\n'
+							+ "But Found:\n" + fileData
 						);
 					}
 				} // End if(!allTypeInfo.TryGetValue(typeName, out typeInfo))

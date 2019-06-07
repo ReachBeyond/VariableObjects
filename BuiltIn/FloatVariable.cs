@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Float", order = -20098)]
+	[CreateAssetMenu(menuName="Variable/Float", order = 350002)]
 	public class FloatVariable : Base.StructVariable<float> {}
 
 	[System.Serializable]
@@ -36,11 +36,12 @@ namespace ReachBeyond.VariableObjects {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "Float",
     "type": "float",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350002,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

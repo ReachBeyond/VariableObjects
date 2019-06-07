@@ -26,11 +26,22 @@ using System.Collections.Generic;
 
 namespace ReachBeyond.VariableObjects.Editor {
 
-	public class SettingsWindow : EditorWindow
-	{
+	public class SettingsWindow : EditorWindow {
 		// TODO Make the little instruction booklet icon open something relevant
 
-		#region Constants
+		/// <summary>
+		/// This is a simple struct used for our foldouts and tracking what
+		/// the user has done with them.
+		/// </summary>
+		private struct FoldoutEventInfo {
+			public bool isFoldedOut;
+			public bool selectedDelete;
+			public bool selectedRemake;
+			public bool selectedEdit;
+
+		}
+
+#region Constants
 		private const string EditorPrefPrefix = "ReachBeyond.VariableObjects.";
 
 		private const string UnityVarFoldoutPref  = EditorPrefPrefix + "unityVarFoldout";
@@ -38,19 +49,19 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 		private const string HorizontalScrollPref = EditorPrefPrefix + "scrollX";
 		private const string VerticalScrollPref   = EditorPrefPrefix + "scrollY";
-		#endregion
+#endregion
 
 
-		#region Initialization
+#region Initialization
 		[MenuItem("Window/Variable Objects")]
 		public static void Init() {
 			// Get existing open window or if none, make a new one:
 			SettingsWindow window = (SettingsWindow)EditorWindow.GetWindow(typeof(SettingsWindow));
 			window.Show();
 		}
-		#endregion
+#endregion
 
-		#region Events
+#region Events
 		private void OnEnable() {
 			titleContent.text = "VarObj Settings";
 		}
@@ -98,7 +109,6 @@ namespace ReachBeyond.VariableObjects.Editor {
 			bool canEdit
 		) {
 			bool isFoldedOut;				// A catch-all variable for storing the foldout bools
-			bool markedForDeletion = false;	// For tracking when something's delete button has been pressed
 
 			// Create the main foldout
 			isFoldedOut = EditorPrefs.GetBool(masterFoldoutPref, defaultValue: false);
@@ -113,52 +123,85 @@ namespace ReachBeyond.VariableObjects.Editor {
 				// Step through all of the types found
 				foreach(ScriptSetInfo fileInfo in fileInfoDictionary.Values) {
 
-					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
-
 					// Draw the foldout (with its delete buttons, if necessary)
-					string foldoutLabel = fileInfo.Name + " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
-					isFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
+					string foldoutLabel = fileInfo.Name
+						+ " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
 
-					if(canEdit && isFoldedOut) {
-						DrawFoldout(ref isFoldedOut, foldoutLabel, out markedForDeletion);
-					}
-					else {
-						DrawFoldout(ref isFoldedOut, foldoutLabel);
-					}
+					// Again, we need to figure out if we're folded out, according to the preferences.
+					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
+					bool isTypeFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
 
-					EditorPrefs.SetBool(editorPrefKey, isFoldedOut);
+					FoldoutEventInfo foldoutInfo = DrawFoldout(
+						EditorPrefs.GetBool(editorPrefKey, defaultValue: false),
+						foldoutLabel,
+						canEdit
+					);
+
+					EditorPrefs.SetBool(editorPrefKey, foldoutInfo.isFoldedOut);
 
 
 					// Again, only render the list of files if the foldout is open.
-					if(isFoldedOut) {
+					if(foldoutInfo.isFoldedOut) {
 						EditorGUI.indentLevel++;
 						DrawFiles(fileInfo.GUIDs);
 						EditorGUI.indentLevel--;
 					}
 
 					// Handle stuff with the delete button
-					if(canEdit && markedForDeletion) {
+					if(foldoutInfo.selectedDelete) {
 
 						//Debug.Log("Delete " + fileInfo.name);
 						//DeleteFilesForType(fileInfo);
 						//ScriptFileManager.DeleteFilesForType(fileInfo, prompt: true);
 						bool deletionConfirmed = EditorUtility.DisplayDialog(
 							"Delete variable object scripts named '" + fileInfo.Name + "'?",
-							"This action cannot be undone!\n(Check VarObj Settings for listing.)",
-							"Delete them", "Keep them"
+							"This action cannot be undone!"
+							+ "\n(Check Variable Object Settings for list of files.)",
+							"Delete them", "Spare them"
 						);
 
 						if(deletionConfirmed) {
 							fileInfo.DeleteFiles();
 						}
+					}
+					else if(foldoutInfo.selectedEdit) {
+						NewVariableTypeWizard.CreateWizard(fileInfo);
+					}
+					else if(foldoutInfo.selectedRemake) {
 
-						markedForDeletion = false;
+						bool remakeConfirmed = EditorUtility.DisplayDialog(
+							"Remake variable object scripts named '" + fileInfo.Name + "'?",
+							"They will be placed inside " + fileInfo.DominantPath + "\n"
+							+ "This action cannot be undone!\n"
+							+ "(Check Variable Object Settings for list of files.)",
+							"Remake them", "Maybe not"
+						);
+
+						if(remakeConfirmed) {
+							List<string> modifiedFiles = fileInfo.RebuildFiles();
+
+						}
 					}
 				} // End foreach(...fileInfo...)
 
+				if(GUILayout.Button("Rebuild all")) {
+
+					bool remakeConfirmed = EditorUtility.DisplayDialog(
+						"Remake all " + masterLabel,
+						"Remake ALL of the scripts? This could break things if you aren't careful!",
+						"Remake them all!", "Hang on!"
+					);
+
+					if(remakeConfirmed) {
+						foreach(ScriptSetInfo setInfo in fileInfoDictionary.Values) {
+							setInfo.RebuildFiles();
+						}
+					}
+				}
+
 				EditorGUI.indentLevel--;
-			}
-		}
+			} // End if(isFoldedOut)
+		} // End DrawVarObjHierarchy
 
 
 		/// <summary>
@@ -177,6 +220,8 @@ namespace ReachBeyond.VariableObjects.Editor {
 			}
 		}
 
+		/*
+
 		/// <summary>
 		/// Draws the foldout.
 		/// </summary>
@@ -186,28 +231,54 @@ namespace ReachBeyond.VariableObjects.Editor {
 		private void DrawFoldout(ref bool foldout, string content) {
 			foldout = EditorGUILayout.Foldout(foldout, content, toggleOnLabelClick: true);
 		}
+		*/
 
 		/// <summary>
 		/// Draws the foldout. Also has a delete button.
 		/// </summary>
 		/// <param name="foldout">Foldout.</param>
 		/// <param name="content">Content.</param>
-		/// <param name="delete">Delete.</param>
-		private void DrawFoldout(ref bool foldout, string content, out bool delete) {
+		/// <param name="drawButtons">If true, extra buttons are drawn while folded out.</param>
+		private FoldoutEventInfo DrawFoldout(bool foldout, string content, bool drawButtons) {
 
-			const int DELETE_BUTTON_WIDTH = 50;
+			const int SPACING = 10;
+			const int DELETE_BUTTON_WIDTH = 60;
+			const int REMAKE_BUTTON_WIDTH = 60;
+			const int EDIT_BUTTON_WIDTH = 60;
+
+			FoldoutEventInfo eventInfo = new FoldoutEventInfo();
 
 			Rect mainRect = EditorGUILayout.GetControlRect();	// Total space we have to work with
-
 			Rect foldoutRect = mainRect;
-			foldoutRect.width -= DELETE_BUTTON_WIDTH;
 
-			Rect deleteRect = mainRect;
-			deleteRect.width = DELETE_BUTTON_WIDTH;
-			deleteRect.x += foldoutRect.width;
+			if(drawButtons && foldout) {
+				// Create our rectangle areas for buttons
+				Rect deleteRect = mainRect;
+				deleteRect.width = DELETE_BUTTON_WIDTH;
 
-			foldout = EditorGUI.Foldout(foldoutRect, foldout, content, toggleOnLabelClick: true);
-			delete = GUI.Button(deleteRect, "Delete");
+				Rect remakeRect = mainRect;
+				remakeRect.width = REMAKE_BUTTON_WIDTH;
+
+				Rect editRect = mainRect;
+				editRect.width = EDIT_BUTTON_WIDTH;
+
+				// Remove the button widths from the foldout's width
+				foldoutRect.width -= (deleteRect.width + remakeRect.width + editRect.width + 2 * SPACING);
+
+				// Put buttons in their places
+				remakeRect.x += foldoutRect.width;
+				editRect.x = remakeRect.x + remakeRect.width + SPACING;
+				deleteRect.x = editRect.x + editRect.width + SPACING;
+
+				// Draw buttons
+				eventInfo.selectedRemake = GUI.Button(remakeRect, "Remake");
+				eventInfo.selectedEdit = GUI.Button(editRect, "Edit");
+				eventInfo.selectedDelete = GUI.Button(deleteRect, "Delete");
+			}
+
+			eventInfo.isFoldedOut = EditorGUI.Foldout(foldoutRect, foldout, content, toggleOnLabelClick: true);
+
+			return eventInfo;
 		}
 #endregion
 

@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Vector3Int", order = -20038)]
+	[CreateAssetMenu(menuName="Variable/Vector3Int", order = 350105)]
 	public class Vector3IntVariable : Base.StructVariable<Vector3Int> {}
 
 	[System.Serializable]
@@ -36,11 +36,12 @@ namespace ReachBeyond.VariableObjects {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "Vector3Int",
     "type": "Vector3Int",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350105,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */

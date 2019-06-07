@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Bool", order = -20099)]
+	[CreateAssetMenu(menuName="Variable/Bool", order = 350004)]
 	public class BoolVariable : Base.StructVariable<bool> {}
 
 	[System.Serializable]
@@ -36,11 +36,12 @@ namespace ReachBeyond.VariableObjects {
 }
 
 
-
 /* DO NOT REMOVE -- START VARIABLE OBJECT INFO -- DO NOT REMOVE **
 {
     "name": "Bool",
     "type": "bool",
-    "referability": "Struct"
+    "referability": "Struct",
+    "menuOrder": 350004,
+    "builtin": true
 }
 ** DO NOT REMOVE --  END VARIABLE OBJECT INFO  -- DO NOT REMOVE */
