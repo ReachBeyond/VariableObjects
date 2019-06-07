@@ -30,10 +30,23 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 	public class UnityFolderPathTests {
 
 		[Test]
-		public void TestProjectExclusivity() {
-			string initPath = "Assets/ReachBeyond";
+		public void TestUnchangingValue() {
+			string initPath = "Assets";
 			UnityFolderPath pathObj = new UnityFolderPath(initPath);
 
+			// There is a very slim chance that this folder actually exists in our project.
+			pathObj.Path = "Assets/NonExistantMelonHead";
+
+			Assert.That(pathObj.Path, Is.EqualTo(initPath));
+		}
+
+		[Test]
+		public void TestProjectExclusivity() {
+			string initPath = "Assets";
+			UnityFolderPath pathObj = new UnityFolderPath(initPath);
+
+			// In this case, the datapath points to a real folder outside our project.
+			// Therefor, this operation should fail.
 			pathObj.Path = Path.GetPathRoot(
 				Path.GetPathRoot( Application.dataPath )
 			);
@@ -41,15 +54,6 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 			Assert.That(pathObj.Path, Is.EqualTo(initPath));
 		}
 
-		[Test]
-		public void TestUnchangingValue() {
-			string initPath = "Assets";
-			UnityFolderPath pathObj = new UnityFolderPath(initPath);
-
-			pathObj.Path = "NonExistantMelonHead";
-
-			Assert.That(pathObj.Path, Is.EqualTo(initPath));
-		}
 	} // End class
 
 } // End namespace
