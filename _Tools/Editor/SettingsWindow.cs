@@ -123,13 +123,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 				// Step through all of the types found
 				foreach(ScriptSetInfo fileInfo in fileInfoDictionary.Values) {
 
-					// Draw the foldout (with its delete buttons, if necessary)
-					string foldoutLabel = fileInfo.Name
-						+ " (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ";
+					// Draw the foldout (with its buttons, if folded out and editable).
 
-					// Again, we need to figure out if we're folded out, according to the preferences.
+					// We need to figure out if we're folded out, according to the preferences.
 					string editorPrefKey = EditorPrefPrefix + fileInfo.Name;
 					bool isTypeFoldedOut = EditorPrefs.GetBool(editorPrefKey, defaultValue: false);
+
+					// We want a compact label if folded out. Otherwise, we'll list more info.
+					string foldoutLabel = fileInfo.Name;
+					if(!isTypeFoldedOut) {
+						foldoutLabel += (" (" + fileInfo.TypeName + ", " + fileInfo.Referability.ToString() + ") ");
+					}
+
 
 					FoldoutEventInfo foldoutInfo = DrawFoldout(
 						EditorPrefs.GetBool(editorPrefKey, defaultValue: false),
