@@ -20,7 +20,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-﻿using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,6 +40,23 @@ namespace ReachBeyond.VariableObjects.Base {
 
 		[SerializeField] protected Type internalValue;
 		[SerializeField] protected VarType variable;
+
+		/// <summary>
+		/// Adds an action to perform when the value is changed. This only works in reference mode.
+		/// </summary>
+		/// <param name="listener"></param>
+		public void AddChangeCallback(Action listener) {
+			// TODO Start tracking this locally and then deal with variable changes, and make it work for values intead of just references.
+			variable?.RegisterListener(listener);
+		}
+
+		/// <summary>
+		/// Removes an action to perform when the value is changed. This only works in reference mode.
+		/// </summary>
+		/// <param name="listener"></param>
+		public void RemoveChangeCallback(Action listener) {
+			variable?.UnregisterListener(listener);
+		}
 
 		protected bool UseInternal {
 			get {
