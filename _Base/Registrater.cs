@@ -50,8 +50,8 @@ namespace ReachBeyond.VariableObjects.Base {
 		[SerializeField] private CleanupTrigger cleanupSignal;
 
 		private void Awake() {
-			Assert.IsNotNull(variable);
-			Assert.IsNotNull(targetValue);
+			Assert.IsNotNull(variable, "Selected variable for registrater attached to " + gameObject.name + " is null");
+			Assert.IsNotNull(targetValue, "Target value on registrater attached to " + gameObject.name + " is null");
 		}
 
 		private void OnEnable() {
