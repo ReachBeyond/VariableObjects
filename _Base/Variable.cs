@@ -35,6 +35,10 @@ namespace ReachBeyond.VariableObjects.Base {
 	public abstract class Variable<T> : EventObject {
 
 		[Header("Config")]
+#if UNITY_EDITOR
+		[Multiline(5)] [Tooltip("This doesn't actually do anything; just describe your variable to your fellow humans")]
+		[SerializeField] private string comments;
+#endif
 		[Tooltip("This value gets applied when the game loads.")]
 		[SerializeField] private T _defaultValue;
 
