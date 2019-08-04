@@ -443,11 +443,18 @@ namespace ReachBeyond.VariableObjects.Editor {
 
 			string[] nameParts = targetName.Split(new char[] { '.' });
 
+			// We need to get rid of array indicators on the last part;
+			// they're absolutely valid in this case.
+			nameParts[nameParts.Length - 1] = Regex.Replace(
+				nameParts[nameParts.Length - 1],
+				"(\\[\\])*$", ""
+			);
+
 			if(nameParts.Length == 1) {
 				// There is only one part in the name. If we are told to allow for lone builtin
 				// names, then we will permit this. Otherwise, it will be excluded.
-				return (permitLoneBuiltin && builtinTypeNames.Contains(targetName))
-					   || provider.IsValidIdentifier(targetName);
+				return (permitLoneBuiltin && builtinTypeNames.Contains(nameParts[0]))
+					   || provider.IsValidIdentifier(nameParts[0]);
 			}
 			else {
 				// If there is more than one part in the name, then it takes this format:

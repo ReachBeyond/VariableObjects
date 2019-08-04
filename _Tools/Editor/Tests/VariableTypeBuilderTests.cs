@@ -63,6 +63,16 @@ namespace ReachBeyond.VariableObjects.Editor.Tests {
 		[TestCase("Some.Specific.Class", true)]
 		[TestCase("Some.int.Class", false)]
 		[TestCase("Some..Class", false)]
+		[TestCase("welp[]", true)]
+		[TestCase("welp[][]", true)]
+		[TestCase("welp[][][]", true)]
+		[TestCase("welp[[]]", false)]
+		[TestCase("hi.welp[]", true)]
+		[TestCase("hi.welp[][]", true)]
+		[TestCase("hi[].welp", false)]
+		[TestCase("[]welp", false)]
+		[TestCase("int[]", true)]
+		[TestCase("int]", false)]
 		public void TestValidNameChecking(string name, bool expected) {
 			Assert.That(
 				VariableTypeBuilder.IsValidName(name),
