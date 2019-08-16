@@ -51,7 +51,7 @@ namespace ReachBeyond.VariableObjects.Base {
 
 		private void Awake() {
 			Assert.IsNotNull(variable, "Selected variable for registrater attached to " + gameObject.name + " is null");
-			Assert.IsNotNull(targetValue, "Target value on registrater attached to " + gameObject.name + " is null");
+			//Assert.IsNotNull(targetValue, "Target value on registrater attached to " + gameObject.name + " is null");
 		}
 
 		private void OnEnable() {
