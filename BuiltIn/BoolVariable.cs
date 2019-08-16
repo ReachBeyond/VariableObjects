@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Bool", order = 350004)]
+	[CreateAssetMenu(menuName="ReachBeyond/Variable/Bool", order = 350004)]
 	public class BoolVariable : Base.StructVariable<bool> {}
 
 	[System.Serializable]

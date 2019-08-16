@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/LayerMask", order = 350024)]
+	[CreateAssetMenu(menuName="ReachBeyond/Variable/LayerMask", order = 350024)]
 	public class LayerMaskVariable : Base.StructVariable<LayerMask> {}
 
 	[System.Serializable]

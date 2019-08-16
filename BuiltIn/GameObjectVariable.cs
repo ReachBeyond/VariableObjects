@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/GameObject", order = 350020)]
+	[CreateAssetMenu(menuName="ReachBeyond/Variable/GameObject", order = 350020)]
 	public class GameObjectVariable : Base.ClassVariable<GameObject> {}
 
 	[System.Serializable]

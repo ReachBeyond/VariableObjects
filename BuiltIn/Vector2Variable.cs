@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Vector2", order = 350060)]
+	[CreateAssetMenu(menuName="ReachBeyond/Variable/Vector2", order = 350060)]
 	public class Vector2Variable : Base.StructVariable<Vector2> {}
 
 	[System.Serializable]

@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace ReachBeyond.VariableObjects {
 
-	[CreateAssetMenu(menuName="Variable/Int", order = 350000)]
+	[CreateAssetMenu(menuName="ReachBeyond/Variable/Int", order = 350000)]
 	public class IntVariable : Base.StructVariable<int> {}
 
 	[System.Serializable]
