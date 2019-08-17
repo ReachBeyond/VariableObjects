@@ -41,6 +41,7 @@ namespace ReachBeyond.VariableObjects.Base {
 			Any, None
 		}
 
+		public bool checkOnEnable = false;
 		public ConstRef checkTarget;
 		public CompareMode mode;
 		public ConstRef[] ofThese;
@@ -48,6 +49,12 @@ namespace ReachBeyond.VariableObjects.Base {
 		[Space(10)]
 		public EventObjectInvoker onTrue;
 		public EventObjectInvoker onFalse;
+
+		private void OnEnable() {
+			if(checkOnEnable) {
+				Check();
+			}
+		}
 
 		public void Check() {
 			bool success = false;
