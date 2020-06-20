@@ -23,9 +23,6 @@ project, and you're done! Alternatively, you can also clone/submodule this into
 your current project using git. If you do that, I recommend putting it under a
 path such as Imported/ReachBeyond/plugins/VariableObjects.
 
-In the future, I'd like to get this Unity's Asset Store. I'll put a link here
-once that becomes a reality.
-
 Usage
 -----
 I recommend you watch the video linked above. It explains the gist of this
